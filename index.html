@@ -17,46 +17,45 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bg);color:var(--ink);font-family:"Space Grotesk",system-ui,sans-serif;
-    line-height:1.5;min-height:100vh;padding:clamp(20px,5vw,56px) 20px 90px;}
-  .wrap{max-width:880px;margin:0 auto}
+    line-height:1.5;min-height:100vh;padding:clamp(24px,5vw,56px) 20px 90px;}
+  .wrap{max-width:900px;margin:0 auto}
 
-  /* ---------- Главная (аккуратная, по центру) ---------- */
-  .landing{text-align:center;max-width:640px;margin:0 auto}
+  /* ---------- Главная ---------- */
+  .landing{text-align:center;max-width:600px;margin:0 auto;padding-top:8px}
   .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.28em;
     text-transform:uppercase;color:var(--amber);margin-bottom:16px;}
-  h1{font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.02em;line-height:1.08}
+  h1{font-size:clamp(28px,4.6vw,44px);font-weight:700;letter-spacing:-.02em;line-height:1.12}
   h1 .cool{color:var(--teal)}
-  .sub{color:var(--muted);margin:16px auto 0;max-width:46ch;font-size:15px}
+  .sub{color:var(--muted);margin:16px auto 0;max-width:44ch;font-size:15px}
 
   .drop{margin-top:32px;border:1.5px dashed var(--line);border-radius:18px;background:var(--panel);
-    padding:46px 28px;text-align:center;cursor:pointer;transition:border-color .18s,background .18s;}
+    padding:52px 28px;cursor:pointer;transition:border-color .18s,background .18s;}
   .drop:hover,.drop.over{border-color:var(--amber);background:var(--panel-2)}
   .drop.over{box-shadow:0 0 0 4px var(--amber-dim)}
-  .drop-icon{width:48px;height:48px;margin:0 auto 16px;border-radius:50%;border:2px solid var(--amber);
-    display:grid;place-items:center;color:var(--amber);font-size:22px;}
-  .drop b{font-weight:500;font-size:16px}
+  .drop-icon{width:50px;height:50px;margin:0 auto 16px;border-radius:50%;border:2px solid var(--amber);
+    display:grid;place-items:center;color:var(--amber);font-size:23px;}
+  .drop b{font-weight:500;font-size:16px;display:block}
   .drop small{display:block;color:var(--muted);margin-top:8px;font-size:13px;font-family:"IBM Plex Mono",monospace}
   input[type=file]{display:none}
 
-  /* Библиотека сохранённых песен */
-  .library{margin-top:34px;text-align:left}
+  .library{margin-top:36px;text-align:left}
   .lib-head{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;
     text-transform:uppercase;color:var(--muted);margin-bottom:12px}
   .songrow{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);
     border-radius:12px;padding:12px 14px;margin-bottom:10px}
   .songrow .disc{flex:none;width:38px;height:38px;border-radius:50%;background:var(--panel-2);
-    display:grid;place-items:center;color:var(--amber)}
+    display:grid;place-items:center;color:var(--amber);font-size:16px}
   .songrow .info{flex:1;min-width:0}
   .songrow .nm{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .songrow .sub2{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);margin-top:2px}
   .btn{font-family:"IBM Plex Mono",monospace;font-size:12px;border-radius:8px;padding:8px 14px;
-    cursor:pointer;border:1px solid var(--line);background:none;color:var(--ink);transition:.15s}
+    cursor:pointer;border:1px solid var(--line);background:none;color:var(--ink);transition:.15s;white-space:nowrap}
   .btn.open{background:var(--amber);border-color:var(--amber);color:#14161c}
   .btn.open:hover{transform:translateY(-1px)}
   .btn.del{color:var(--muted)} .btn.del:hover{border-color:#c0574f;color:#c0574f}
 
   /* ---------- Статус ---------- */
-  .status{margin:26px auto 0;max-width:640px;display:none}
+  .status{margin:26px auto 0;max-width:600px;display:none}
   .status.on{display:block}
   .bar{height:6px;background:var(--panel-2);border-radius:99px;overflow:hidden}
   .bar > i{display:block;height:100%;width:0;background:var(--amber);transition:width .12s linear}
@@ -85,12 +84,11 @@
     background:var(--panel-2);border-radius:99px;outline:none}
   .vol input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;
     border-radius:50%;background:var(--amber);cursor:pointer}
-  .vol input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-radius:50%;
-    background:var(--amber);cursor:pointer}
+  .vol input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-radius:50%;background:var(--amber);cursor:pointer}
 
   .now{display:flex;align-items:center;gap:22px;background:var(--panel);border:1px solid var(--line);
-    border-radius:14px;padding:20px 24px;margin-bottom:26px;min-height:156px}
-  .now .big{font-size:clamp(44px,10vw,72px);font-weight:700;letter-spacing:-.02em;min-width:2ch}
+    border-radius:14px;padding:20px 24px;margin-bottom:26px;min-height:172px}
+  .now .big{font-size:clamp(46px,10vw,76px);font-weight:700;letter-spacing:-.02em;min-width:2ch}
   .now .big.maj{color:var(--amber)} .now .big.min{color:var(--teal)}
   .now .meta{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);
     text-transform:uppercase;letter-spacing:.16em;margin-bottom:6px}
@@ -99,23 +97,23 @@
   .section-label{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;
     text-transform:uppercase;color:var(--muted);margin:0 0 12px}
 
-  /* Сетка долей (как в Chordify) */
-  .grid{display:flex;overflow-x:auto;border:1px solid var(--line);border-radius:12px;
-    background:var(--panel);padding-bottom:8px;margin-bottom:30px}
-  .grid::-webkit-scrollbar{height:7px}
-  .grid::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
-  .beat{flex:none;width:50px;height:70px;border-right:1px solid #23262f;display:grid;place-items:center;
-    cursor:pointer;position:relative}
-  .beat.bar{border-left:2px solid var(--line)}
-  .beat .bc{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:17px}
-  .beat.maj .bc{color:var(--amber)} .beat.min .bc{color:var(--teal)}
-  .beat.playing{background:rgba(255,255,255,.05)}
-  .beat.playing::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--amber)}
+  /* ---------- Движущаяся лента аккордов ---------- */
+  .ribbon-wrap{position:relative;overflow:hidden;height:100px;border:1px solid var(--line);
+    border-radius:12px;background:var(--panel);margin-bottom:30px}
+  .playhead{position:absolute;left:38%;top:0;bottom:0;width:2px;background:var(--ink);opacity:.55;z-index:3;pointer-events:none}
+  .playhead::before{content:'';position:absolute;top:-1px;left:-6px;border:7px solid transparent;border-top-color:var(--ink)}
+  .ribbon{position:absolute;top:0;bottom:0;left:0;transform:translateX(0)}
+  .rblock{position:absolute;top:10px;bottom:10px;display:flex;align-items:center;justify-content:center;
+    border-radius:9px;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:22px;overflow:hidden;cursor:pointer}
+  .rblock.maj{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(232,163,61,.3)}
+  .rblock.min{background:var(--teal-dim);color:var(--teal);border:1px solid rgba(95,179,179,.3)}
+  .rblock.active.maj{background:var(--amber);color:#14161c;border-color:var(--amber)}
+  .rblock.active.min{background:var(--teal);color:#14161c;border-color:var(--teal)}
 
   .diagrams{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:30px}
   .chordcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;
-    padding:14px 10px 10px;text-align:center;width:108px}
-  .chordcard .name{font-family:"IBM Plex Mono",monospace;font-weight:600;margin-top:6px;font-size:15px}
+    padding:16px 12px 12px;text-align:center;width:132px}
+  .chordcard .name{font-family:"IBM Plex Mono",monospace;font-weight:600;margin-top:8px;font-size:16px}
   .chordcard.maj .name{color:var(--amber)} .chordcard.min .name{color:var(--teal)}
 
   .readout{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px}
@@ -138,12 +136,11 @@
 <body>
 <div class="wrap">
 
-  <!-- ========== ГЛАВНАЯ ========== -->
   <div class="landing" id="landing">
     <div class="eyebrow">аудио → аккорды</div>
     <h1>Аккорды для <span class="cool">гитары</span> из любого трека</h1>
-    <p class="sub">Загрузи песню — сайт разберёт её прямо в браузере: аккорды в сетке
-    тактов, аппликатуры и подсветка в такт. Ничего никуда не отправляется.</p>
+    <p class="sub">Загрузи песню — сайт разберёт её прямо в браузере: аккорды едут лентой
+    в такт музыке, рядом аппликатуры. Ничего никуда не отправляется.</p>
 
     <label class="drop" id="drop">
       <div class="drop-icon">↑</div>
@@ -158,13 +155,11 @@
     </div>
   </div>
 
-  <!-- ========== СТАТУС ========== -->
   <div class="status" id="status">
     <div class="bar"><i id="barfill"></i></div>
     <p id="statustext">Читаю файл…</p>
   </div>
 
-  <!-- ========== РЕЗУЛЬТАТЫ ========== -->
   <div class="results" id="results">
     <div class="topbar">
       <div class="songtitle" id="songtitle">Песня</div>
@@ -188,14 +183,17 @@
 
     <div class="now">
       <div>
-        <div class="meta">Сейчас</div>
+        <div class="meta">Сейчас играет</div>
         <div class="big" id="nowchord">—</div>
       </div>
       <div class="diagram" id="nowdiagram"></div>
     </div>
 
-    <div class="section-label">Аккорды по тактам · нажми, чтобы перемотать</div>
-    <div class="grid" id="grid"></div>
+    <div class="section-label">Лента аккордов · едет под указателем · нажми блок, чтобы перемотать</div>
+    <div class="ribbon-wrap" id="ribbonWrap">
+      <div class="playhead"></div>
+      <div class="ribbon" id="ribbon"></div>
+    </div>
 
     <div class="section-label">Аппликатуры аккордов в песне</div>
     <div class="diagrams" id="diagrams"></div>
@@ -213,8 +211,8 @@
     </div>
 
     <p class="note">Точность зависит от записи: чистая акустика распознаётся хорошо,
-    плотный микс с искажениями — хуже. Сетка тактов строится по определённому темпу,
-    поэтому может немного «плыть». Бой подобран по темпу, а не «услышан».</p>
+    плотный микс с искажениями — хуже. Скорость ленты привязана к определённому темпу,
+    поэтому под конец может слегка «плыть». Бой подобран по темпу, а не «услышан».</p>
   </div>
 
   <footer>Работает офлайн в браузере · песни хранятся только у тебя на устройстве</footer>
@@ -222,7 +220,7 @@
 
 <script>
 const NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const FFT_SIZE=16384, HOP=8192;
+const FFT_SIZE=16384, HOP=8192, PXPS=100;
 
 // ---------- Аппликатуры (низкая E → высокая e); -1 = не играть, 0 = открытая ----------
 const SHAPES={
@@ -233,41 +231,51 @@ const SHAPES={
   'Em':[0,2,2,0,0,0],'Fm':[1,3,3,1,1,1],'F#m':[2,4,4,2,2,2],'Gm':[3,5,5,3,3,3],
   'G#m':[4,6,6,4,4,4],'Am':[-1,0,2,2,1,0],'A#m':[-1,1,3,3,2,1],'Bm':[-1,2,4,4,3,2]
 };
-// Пальцы для открытых форм (0 = нет)
+// Пальцы (0 = нет). Для баррэ-струн стоит 1, но они рисуются полосой баррэ, а не точкой.
 const FINGERS={
-  'C':[0,3,2,0,1,0],'A':[0,0,1,2,3,0],'Am':[0,0,2,3,1,0],'E':[0,2,3,1,0,0],
-  'Em':[0,2,3,0,0,0],'D':[0,0,0,1,3,2],'Dm':[0,0,0,2,3,1],'G':[0,2,1,0,0,3]
+  'C':[0,3,2,0,1,0],'D':[0,0,0,1,3,2],'E':[0,2,3,1,0,0],'G':[2,1,0,0,0,3],
+  'A':[0,0,1,2,3,0],'Am':[0,0,2,3,1,0],'Em':[0,2,3,0,0,0],'Dm':[0,0,0,2,3,1],
+  'F':[1,3,4,2,1,1],'F#':[1,3,4,2,1,1],'G#':[1,3,4,2,1,1],
+  'Fm':[1,3,4,1,1,1],'F#m':[1,3,4,1,1,1],'Gm':[1,3,4,1,1,1],'G#m':[1,3,4,1,1,1],
+  'A#':[0,1,2,3,4,1],'B':[0,1,2,3,4,1],'C#':[0,1,2,3,4,1],
+  'A#m':[0,1,3,4,2,1],'Bm':[0,1,3,4,2,1],'C#m':[0,1,3,4,2,1],'Cm':[0,1,3,4,2,1],
+  'D#':[0,0,1,2,4,3],'D#m':[0,0,1,3,4,2]
 };
 function isMinor(l){return l.endsWith('m');}
 function drawChord(label){
   const f=SHAPES[label]; if(!f) return '';
-  const W=92,H=112,x0=16,x1=76,yTop=30,rows=4;
-  const sg=(x1-x0)/5, fh=(H-16-yTop)/rows;
+  const W=124,H=152,x0=22,x1=104,yTop=36,rows=5;
+  const sg=(x1-x0)/5, fh=(H-20-yTop)/rows;
   const fretted=f.filter(v=>v>0);
   let start=1; if(fretted.length && Math.max(...fretted)>4) start=Math.min(...fretted);
   const col=isMinor(label)?'#5fb3b3':'#e8a33d';
   const xs=i=>x0+i*sg;
-  let s=`<svg viewBox="0 0 ${W} ${H}" width="92" height="112" xmlns="http://www.w3.org/2000/svg">`;
-  for(let i=0;i<6;i++) s+=`<line x1="${xs(i)}" y1="${yTop}" x2="${xs(i)}" y2="${yTop+rows*fh}" stroke="#3a4050" stroke-width="1"/>`;
-  for(let r=0;r<=rows;r++){const y=yTop+r*fh;const sw=(r===0&&start===1)?3:1;
+  const rowY=fr=>yTop+(fr-start+0.5)*fh;
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="124" height="152" xmlns="http://www.w3.org/2000/svg">`;
+  for(let i=0;i<6;i++) s+=`<line x1="${xs(i)}" y1="${yTop}" x2="${xs(i)}" y2="${yTop+rows*fh}" stroke="#3a4050" stroke-width="1.2"/>`;
+  for(let r=0;r<=rows;r++){const y=yTop+r*fh;const sw=(r===0&&start===1)?4:1.2;
     s+=`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="#3a4050" stroke-width="${sw}"/>`;}
-  if(start>1) s+=`<text x="${x0-6}" y="${yTop+fh*0.7}" fill="#8a8f9c" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="end">${start}</text>`;
-  // баррэ
-  const atStart=[]; for(let i=0;i<6;i++) if(f[i]===start) atStart.push(i);
+  if(start>1) s+=`<text x="${x0-8}" y="${yTop+fh*0.72}" fill="#8a8f9c" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="end">${start}</text>`;
+  // баррэ по минимальному прижатому ладу
+  const minFret=fretted.length?Math.min(...fretted):0;
+  const atMin=[]; for(let i=0;i<6;i++) if(minFret>0 && f[i]===minFret) atMin.push(i);
   let barre=null;
-  if(atStart.length>=2){barre={from:Math.min(...atStart),to:Math.max(...atStart)};
-    const cy=yTop+0.5*fh, x1b=xs(barre.from), x2b=xs(barre.to);
-    s+=`<rect x="${x1b-6}" y="${cy-6}" width="${x2b-x1b+12}" height="12" rx="6" fill="${col}"/>`;}
+  if(atMin.length>=2){
+    barre={from:Math.min(...atMin),to:Math.max(...atMin),fret:minFret};
+    const cy=rowY(minFret), xa=xs(barre.from), xb=xs(barre.to);
+    s+=`<rect x="${xa-7}" y="${cy-7}" width="${xb-xa+14}" height="14" rx="7" fill="${col}"/>`;
+    s+=`<text x="${xa}" y="${cy+3.5}" fill="#14161c" font-size="9" font-weight="700" font-family="IBM Plex Mono,monospace" text-anchor="middle">1</text>`;
+  }
   const fg=FINGERS[label];
   for(let i=0;i<6;i++){
     const x=xs(i);
-    if(f[i]===-1){s+=`<text x="${x}" y="${yTop-7}" fill="#8a8f9c" font-size="11" text-anchor="middle">×</text>`;}
-    else if(f[i]===0){s+=`<circle cx="${x}" cy="${yTop-10}" r="3.6" fill="none" stroke="#8a8f9c" stroke-width="1.3"/>`;}
+    if(f[i]===-1){s+=`<text x="${x}" y="${yTop-9}" fill="#8a8f9c" font-size="12" text-anchor="middle">×</text>`;}
+    else if(f[i]===0){s+=`<circle cx="${x}" cy="${yTop-12}" r="4" fill="none" stroke="#8a8f9c" stroke-width="1.4"/>`;}
     else{
-      if(barre && f[i]===start && i>=barre.from && i<=barre.to) continue; // покрыто баррэ
-      const pos=f[i]-start+1, cy=yTop+(pos-0.5)*fh;
-      s+=`<circle cx="${x}" cy="${cy}" r="6" fill="${col}"/>`;
-      if(fg && fg[i]>0) s+=`<text x="${x}" y="${cy+3}" fill="#14161c" font-size="8" font-weight="700" font-family="IBM Plex Mono,monospace" text-anchor="middle">${fg[i]}</text>`;
+      if(barre && f[i]===barre.fret && i>=barre.from && i<=barre.to) continue;
+      const cy=rowY(f[i]);
+      s+=`<circle cx="${x}" cy="${cy}" r="7" fill="${col}"/>`;
+      if(fg && fg[i]>0) s+=`<text x="${x}" y="${cy+3.5}" fill="#14161c" font-size="9" font-weight="700" font-family="IBM Plex Mono,monospace" text-anchor="middle">${fg[i]}</text>`;
     }
   }
   return s+'</svg>';
@@ -294,7 +302,7 @@ for(let r=0;r<12;r++)for(const q of ['maj','min']){
 const WINDOW=new Float32Array(FFT_SIZE);
 for(let i=0;i<FFT_SIZE;i++) WINDOW[i]=0.5-0.5*Math.cos(2*Math.PI*i/(FFT_SIZE-1));
 
-// ---------- IndexedDB (сохранение песен) ----------
+// ---------- IndexedDB ----------
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('chordapp',1);
   r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('songs'))r.result.createObjectStore('songs',{keyPath:'id'});};
   r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);});}
@@ -308,10 +316,12 @@ async function dbDel(id){const db=await idb();return new Promise((res,rej)=>{con
   tx.objectStore('songs').delete(id);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);});}
 
 // ---------- Состояние ----------
-let SEGS=[], BPM=0, KEYLABEL='—', DURATION=0, BEATDUR=0, curObjURL=null;
+let SEGS=[], BPM=0, KEYLABEL='—', DURATION=0, BEATDUR=1.5, curObjURL=null;
+let RBLOCKS=[], activeBlock=-1, raf=null, lastIdx=-1;
 const $=id=>document.getElementById(id);
 const drop=$('drop'), fileInput=$('file'), landing=$('landing'), statusEl=$('status'),
-  barfill=$('barfill'), statustext=$('statustext'), resultsEl=$('results'), audio=$('audio'), grid=$('grid');
+  barfill=$('barfill'), statustext=$('statustext'), resultsEl=$('results'), audio=$('audio'),
+  ribbon=$('ribbon'), ribbonWrap=$('ribbonWrap');
 
 ['dragover','dragenter'].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.add('over');}));
 ['dragleave','drop'].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove('over');}));
@@ -328,7 +338,6 @@ function setStatus(t,p){statustext.textContent=t;if(p!=null)barfill.style.width=
 function fmt(t){t=t||0;const m=Math.floor(t/60),s=Math.floor(t%60);return m+':'+String(s).padStart(2,'0');}
 function niceSize(b){return b>1e6?(b/1e6).toFixed(1)+' МБ':Math.round(b/1e3)+' КБ';}
 
-// ---------- Загрузка нового файла ----------
 async function handleFile(file){
   landing.style.display='none'; resultsEl.classList.remove('on');
   statusEl.classList.add('on'); setStatus('Читаю файл…',0.05);
@@ -341,27 +350,21 @@ async function handleFile(file){
     const ac=new (window.AudioContext||window.webkitAudioContext)();
     const decoded=await ac.decodeAudioData(buf);
     await analyze(decoded);
-    // авто-сохранение
-    try{
-      await dbPut({id:file.name+'_'+file.size,name:file.name,size:file.size,blob:file,
-        segs:SEGS,bpm:BPM,key:KEYLABEL,duration:DURATION,addedAt:Date.now()});
-    }catch(e){console.warn('Не удалось сохранить песню:',e);}
+    try{await dbPut({id:file.name+'_'+file.size,name:file.name,size:file.size,blob:file,
+      segs:SEGS,bpm:BPM,key:KEYLABEL,duration:DURATION,addedAt:Date.now()});}catch(e){console.warn(e);}
   }catch(err){
     console.error(err);
     setStatus('Не удалось прочитать файл. Попробуй mp3 или wav.',0);
     setTimeout(()=>{statusEl.classList.remove('on');landing.style.display='';},2600);
   }
 }
-
-// ---------- Открыть сохранённую ----------
 async function openSaved(id){
   const rec=await dbGet(id); if(!rec)return;
   landing.style.display='none';
   if(curObjURL) URL.revokeObjectURL(curObjURL);
   curObjURL=URL.createObjectURL(rec.blob); audio.src=curObjURL;
   $('songtitle').textContent=rec.name.replace(/\.[^.]+$/,'');
-  SEGS=rec.segs; BPM=rec.bpm; KEYLABEL=rec.key; DURATION=rec.duration;
-  BEATDUR=BPM>0?60/BPM:1.5;
+  SEGS=rec.segs; BPM=rec.bpm; KEYLABEL=rec.key; DURATION=rec.duration; BEATDUR=BPM>0?60/BPM:1.5;
   renderAll();
 }
 
@@ -387,7 +390,6 @@ async function analyze(audioBuf){
     frames.push({time:start/sr,chroma,energy}); done++;
     if(done%24===0){setStatus('Распознаю аккорды…',0.15+0.7*(done/totalFrames));await sleep(0);}
   }
-
   const en=frames.map(f=>f.energy).sort((a,b)=>a-b);
   const silence=(en[Math.floor(en.length/2)]||0)*0.25;
   let labels=frames.map(f=>{
@@ -398,7 +400,6 @@ async function analyze(audioBuf){
     return best;
   });
   labels=modeFilter(labels,11);
-
   let segs=[];
   for(let i=0;i<labels.length;i++){const t=frames[i].time;
     if(segs.length&&segs[segs.length-1].label===labels[i]) segs[segs.length-1].end=t;
@@ -408,8 +409,7 @@ async function analyze(audioBuf){
   segs=segs.filter(s=>s.label!=='N'&&(s.end-s.start)>=1.2);
   segs=mergeAdjacent(segs);
 
-  SEGS=segs; BPM=estimateTempo(mono,sr); KEYLABEL=estimateKey(frames);
-  BEATDUR=BPM>0?60/BPM:1.5;
+  SEGS=segs; BPM=estimateTempo(mono,sr); KEYLABEL=estimateKey(frames); BEATDUR=BPM>0?60/BPM:1.5;
   setStatus('Готово',1); await sleep(120);
   renderAll();
 }
@@ -442,23 +442,23 @@ function renderAll(){
   $('dur').innerHTML=Math.round(DURATION)+'<small>сек</small>';
   $('total').textContent=fmt(DURATION);
 
-  // сетка долей
-  grid.innerHTML='';
-  if(!SEGS.length){grid.innerHTML='<div style="color:var(--muted);font-family:IBM Plex Mono,monospace;font-size:13px;padding:22px">Аккорды не распознаны — попробуй запись почище</div>';}
-  else{
-    const frag=document.createDocumentFragment(); let shown=null, bi=0;
-    for(let t=0;t<DURATION;t+=BEATDUR,bi++){
-      const idx=segAt(t); const label=idx>=0?SEGS[idx].label:'';
+  // лента
+  ribbon.innerHTML=''; RBLOCKS=[]; activeBlock=-1;
+  ribbon.style.width=(DURATION*PXPS)+'px';
+  const beatPx=Math.max(24,BEATDUR*PXPS);
+  ribbon.style.backgroundImage='repeating-linear-gradient(90deg,transparent 0,transparent '+(beatPx-1)+'px,rgba(255,255,255,.05) '+(beatPx-1)+'px,rgba(255,255,255,.05) '+beatPx+'px)';
+  if(SEGS.length){
+    const frag=document.createDocumentFragment();
+    SEGS.forEach(s=>{
       const el=document.createElement('div');
-      el.className='beat'+(bi%4===0?' bar':''); el.dataset.i=bi;
-      if(label && label!==shown){el.classList.add(isMinor(label)?'min':'maj');
-        el.innerHTML='<span class="bc">'+label+'</span>'; shown=label;}
-      else if(!label) shown=null;
-      const seekT=t;
-      el.addEventListener('click',()=>{audio.currentTime=seekT;audio.play();});
-      frag.appendChild(el);
-    }
-    grid.appendChild(frag);
+      el.className='rblock '+(isMinor(s.label)?'min':'maj');
+      el.style.left=(s.start*PXPS)+'px';
+      el.style.width=Math.max(30,(s.end-s.start)*PXPS-4)+'px';
+      el.textContent=s.label;
+      el.addEventListener('click',()=>{audio.currentTime=s.start;audio.play();});
+      frag.appendChild(el); RBLOCKS.push({el,start:s.start,end:s.end});
+    });
+    ribbon.appendChild(frag);
   }
 
   // аппликатуры
@@ -474,14 +474,22 @@ function renderAll(){
   else if(BPM<120){sp.textContent='↓  ↓  ↑  ↑↓↑';sn.textContent='Средний темп — универсальная «четвёрка».';}
   else{sp.textContent='↓↑ ↓↑ ↓↑ ↓↑';sn.textContent='Быстрый темп — ровная «восьмёрка».';}
 
-  lastIdx=-1; lastBeat=-1; updatePlayhead(0);
-  statusEl.classList.remove('on');
-  resultsEl.classList.add('on');
+  lastIdx=-1; frameUpdate(0);
+  statusEl.classList.remove('on'); resultsEl.classList.add('on');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-let lastIdx=-1,lastBeat=-1;
-function updatePlayhead(t){
+function frameUpdate(t){
+  // лента едет: точка t оказывается под указателем
+  const headX=ribbonWrap.clientWidth*0.38;
+  ribbon.style.transform='translateX('+(headX - t*PXPS)+'px)';
+  let ai=-1; for(let i=0;i<RBLOCKS.length;i++){if(t>=RBLOCKS[i].start&&t<RBLOCKS[i].end){ai=i;break;}}
+  if(ai!==activeBlock){
+    if(activeBlock>=0&&RBLOCKS[activeBlock])RBLOCKS[activeBlock].el.classList.remove('active');
+    if(ai>=0)RBLOCKS[ai].el.classList.add('active');
+    activeBlock=ai;
+  }
+  // «сейчас играет»
   const idx=segAt(t);
   if(idx!==lastIdx){
     const show=idx>=0?idx:(SEGS.length?0:-1);
@@ -490,29 +498,24 @@ function updatePlayhead(t){
     else{nc.textContent='—';nc.className='big';nd.innerHTML='';}
     lastIdx=idx;
   }
-  const bi=BEATDUR>0?Math.floor(t/BEATDUR):-1;
-  if(bi!==lastBeat){
-    const prev=grid.querySelector('.beat.playing');if(prev)prev.classList.remove('playing');
-    const cur=grid.querySelector('.beat[data-i="'+bi+'"]');
-    if(cur){cur.classList.add('playing');cur.scrollIntoView({inline:'center',block:'nearest'});}
-    lastBeat=bi;
-  }
 }
 
-// ---------- Плеер ----------
+// ---------- Плеер + плавная анимация ленты ----------
 const playbtn=$('playbtn'),playicon=$('playicon'),seek=$('seek'),seekfill=$('seekfill'),vol=$('vol');
+function loop(){frameUpdate(audio.currentTime);if(!audio.paused)raf=requestAnimationFrame(loop);}
 playbtn.addEventListener('click',()=>{if(audio.paused)audio.play();else audio.pause();});
-audio.addEventListener('play',()=>{playicon.innerHTML='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';});
-audio.addEventListener('pause',()=>{playicon.innerHTML='<path d="M8 5v14l11-7z"/>';});
+audio.addEventListener('play',()=>{playicon.innerHTML='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);});
+audio.addEventListener('pause',()=>{playicon.innerHTML='<path d="M8 5v14l11-7z"/>';cancelAnimationFrame(raf);frameUpdate(audio.currentTime);});
+audio.addEventListener('seeked',()=>frameUpdate(audio.currentTime));
 audio.addEventListener('timeupdate',()=>{
   const d=audio.duration||0;
   seekfill.style.width=(d?audio.currentTime/d*100:0)+'%';
   $('cur').textContent=fmt(audio.currentTime);
-  updatePlayhead(audio.currentTime);
 });
 seek.addEventListener('click',e=>{const r=seek.getBoundingClientRect();
   audio.currentTime=(e.clientX-r.left)/r.width*(audio.duration||0);});
 vol.addEventListener('input',()=>{audio.volume=parseFloat(vol.value);});
+window.addEventListener('resize',()=>{if(resultsEl.classList.contains('on'))frameUpdate(audio.currentTime);});
 
 // ---------- Библиотека ----------
 async function refreshLibrary(){
@@ -523,12 +526,10 @@ async function refreshLibrary(){
   box.style.display=''; out.innerHTML='';
   list.forEach(rec=>{
     const row=document.createElement('div');row.className='songrow';
-    row.innerHTML=
-      '<div class="disc">♪</div>'+
+    row.innerHTML='<div class="disc">♪</div>'+
       '<div class="info"><div class="nm">'+rec.name.replace(/\.[^.]+$/,'')+'</div>'+
       '<div class="sub2">'+(rec.bpm||'?')+' BPM · '+rec.key+' · '+niceSize(rec.size)+'</div></div>'+
-      '<button class="btn open">Открыть</button>'+
-      '<button class="btn del">Удалить</button>';
+      '<button class="btn open">Открыть</button><button class="btn del">Удалить</button>';
     row.querySelector('.open').addEventListener('click',()=>openSaved(rec.id));
     row.querySelector('.del').addEventListener('click',async()=>{await dbDel(rec.id);refreshLibrary();});
     out.appendChild(row);
