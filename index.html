@@ -322,6 +322,7 @@ const drop=$('drop'), fileInput=$('file'), landing=$('landing'), statusEl=$('sta
   barfill=$('barfill'), statustext=$('statustext'), resultsEl=$('results'), audio=$('audio'),
   ribbon=$('ribbon'), ribbonWrap=$('ribbonWrap');
 
+['dragover','drop'].forEach(e=>window.addEventListener(e,ev=>ev.preventDefault()));
 ['dragover','dragenter'].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.add('over');}));
 ['dragleave','drop'].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove('over');}));
 drop.addEventListener('drop',ev=>{if(ev.dataTransfer.files[0])handleFile(ev.dataTransfer.files[0]);});
