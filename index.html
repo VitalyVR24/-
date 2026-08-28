@@ -45,6 +45,9 @@
     transition:transform .12s,box-shadow .12s}
   .uc-btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(232,163,61,.32)}
   .uc-hint{margin-top:16px;color:var(--muted);font-size:12px}
+  .lessons-link{display:inline-block;margin-top:22px;color:var(--teal);text-decoration:none;
+    font-size:14px;border-bottom:1px solid transparent;transition:border-color .15s}
+  .lessons-link:hover{border-bottom-color:var(--teal)}
   input[type=file]{display:none}
 
   .library{margin-top:36px;text-align:left}
@@ -162,6 +165,8 @@
       <div class="uc-hint">или просто перетащи файл в это окно</div>
       <input type="file" id="file" accept="audio/*">
     </div>
+
+    <a class="lessons-link" href="lessons.html">🎸 Хочу научиться играть — уроки на гитаре →</a>
 
     <div class="library" id="library" style="display:none">
       <div class="lib-head">Мои песни</div>
