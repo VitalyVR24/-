@@ -20,23 +20,31 @@
   .wrap{max-width:900px;margin:0 auto}
 
   /* ---------- Главная ---------- */
-  .landing{text-align:center;max-width:600px;margin:0 auto;padding-top:8px}
+  .landing{text-align:center;max-width:560px;margin:0 auto;padding-top:8px;position:relative}
+  .glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:520px;max-width:100%;
+    height:300px;background:radial-gradient(ellipse at center,rgba(232,163,61,.15),transparent 70%);
+    filter:blur(10px);pointer-events:none;z-index:0}
+  .hero,.upload-card,.library{position:relative;z-index:1}
   .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.28em;
     text-transform:uppercase;color:var(--amber);margin-bottom:16px;}
-  h1{font-size:clamp(28px,4.6vw,44px);font-weight:700;letter-spacing:-.02em;line-height:1.12}
+  h1{font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.02em;line-height:1.1}
   h1 .cool{color:var(--teal)}
-  .sub{color:var(--muted);margin:16px auto 0;max-width:44ch;font-size:15px}
+  .sub{color:var(--muted);margin:16px auto 0;max-width:42ch;font-size:15px}
 
-  .drop{margin-top:32px;border:1.5px dashed var(--line);border-radius:18px;background:var(--panel);
-    padding:52px 28px;cursor:pointer;transition:border-color .18s,background .18s;}
-  .drop:hover,.drop.over{border-color:var(--amber);background:var(--panel-2)}
-  .drop.over{box-shadow:0 0 0 4px var(--amber-dim)}
-  .drop-icon{width:50px;height:50px;margin:0 auto 16px;border-radius:50%;border:2px solid var(--amber);
-    display:grid;place-items:center;color:var(--amber);font-size:23px;}
-  .drop b{font-weight:500;font-size:16px;display:block}
-  .choose{display:inline-block;margin-top:16px;background:var(--amber);color:#14161c;
-    font-weight:600;font-size:14px;padding:11px 22px;border-radius:10px}
-  .drop small{display:block;color:var(--muted);margin-top:14px;font-size:13px;font-family:"IBM Plex Mono",monospace}
+  .upload-card{margin:34px auto 0;max-width:440px;background:linear-gradient(180deg,#20242e,#191c24);
+    border:1px solid var(--line);border-radius:22px;padding:40px 32px;
+    box-shadow:0 24px 60px rgba(0,0,0,.4);transition:border-color .18s,box-shadow .18s}
+  .upload-card.over{border-color:var(--amber);box-shadow:0 0 0 4px var(--amber-dim),0 24px 60px rgba(0,0,0,.4)}
+  .uc-icon{width:66px;height:66px;margin:0 auto 18px;border-radius:20px;background:var(--amber-dim);
+    display:grid;place-items:center;color:var(--amber);font-size:30px}
+  .uc-title{font-size:19px;font-weight:600}
+  .uc-desc{color:var(--muted);font-size:12px;font-family:"IBM Plex Mono",monospace;
+    letter-spacing:.1em;margin-top:6px}
+  .uc-btn{margin-top:22px;background:var(--amber);color:#14161c;border:none;font-family:inherit;
+    font-weight:700;font-size:16px;padding:15px 36px;border-radius:13px;cursor:pointer;
+    transition:transform .12s,box-shadow .12s}
+  .uc-btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(232,163,61,.32)}
+  .uc-hint{margin-top:16px;color:var(--muted);font-size:12px}
   input[type=file]{display:none}
 
   .library{margin-top:36px;text-align:left}
@@ -138,18 +146,22 @@
 <div class="wrap">
 
   <div class="landing" id="landing">
-    <div class="eyebrow">аудио → аккорды</div>
-    <h1>Аккорды для <span class="cool">гитары</span> из любого трека</h1>
-    <p class="sub">Загрузи песню — сайт разберёт её прямо в браузере: аккорды едут лентой
-    в такт музыке, рядом аппликатуры. Ничего никуда не отправляется.</p>
+    <div class="glow"></div>
+    <div class="hero">
+      <div class="eyebrow">аккорды из музыки</div>
+      <h1>Загрузи трек —<br><span class="cool">получи аккорды</span></h1>
+      <p class="sub">Сайт разберёт песню прямо в браузере: аккорды поедут лентой
+      в такт музыке, рядом — аппликатуры. Ничего никуда не отправляется.</p>
+    </div>
 
-    <label class="drop" id="drop">
-      <div class="drop-icon">↑</div>
-      <b>Выбери песню с компьютера</b>
-      <span class="choose">Выбрать файл</span>
-      <small>или перетащи сюда · mp3 · wav · m4a · ogg · flac</small>
+    <div class="upload-card" id="drop">
+      <div class="uc-icon">♪</div>
+      <div class="uc-title">Выбери аудиофайл</div>
+      <div class="uc-desc">mp3 · wav · m4a · ogg · flac</div>
+      <button class="uc-btn" id="pickBtn" type="button">Выбрать песню</button>
+      <div class="uc-hint">или просто перетащи файл в это окно</div>
       <input type="file" id="file" accept="audio/*">
-    </label>
+    </div>
 
     <div class="library" id="library" style="display:none">
       <div class="lib-head">Мои песни</div>
@@ -330,6 +342,7 @@ const drop=$('drop'), fileInput=$('file'), landing=$('landing'), statusEl=$('sta
 ['dragleave','drop'].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove('over');}));
 drop.addEventListener('drop',ev=>{if(ev.dataTransfer.files[0])handleFile(ev.dataTransfer.files[0]);});
 fileInput.addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0]);});
+$('pickBtn').addEventListener('click',()=>fileInput.click());
 $('again').addEventListener('click',()=>{
   audio.pause(); resultsEl.classList.remove('on'); landing.style.display=''; fileInput.value='';
   if(curObjURL){URL.revokeObjectURL(curObjURL);curObjURL=null;}
