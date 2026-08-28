@@ -377,8 +377,8 @@ async function handleFile(file){
     const ac=new (window.AudioContext||window.webkitAudioContext)();
     const decoded=await ac.decodeAudioData(buf);
     await analyze(decoded);
-    try{await dbPut({id:file.name+'_'+file.size,name:file.name,size:file.size,blob:file,
-      segs:SEGS,bpm:BPM,key:KEYLABEL,duration:DURATION,addedAt:Date.now()});}catch(e){console.warn(e);}
+    if(SEGS.length){ try{await dbPut({id:file.name+'_'+file.size,name:file.name,size:file.size,blob:file,
+      segs:SEGS,bpm:BPM,key:KEYLABEL,duration:DURATION,addedAt:Date.now()});}catch(e){console.warn(e);} }
   }catch(err){
     console.error(err);
     setStatus('Не удалось прочитать файл. Попробуй mp3 или wav.',0);
@@ -391,7 +391,7 @@ async function openSaved(id){
   if(curObjURL) URL.revokeObjectURL(curObjURL);
   curObjURL=URL.createObjectURL(rec.blob); audio.src=curObjURL;
   $('songtitle').textContent=rec.name.replace(/\.[^.]+$/,'');
-  SEGS=rec.segs; BPM=rec.bpm; KEYLABEL=rec.key; DURATION=rec.duration; BEATDUR=BPM>0?60/BPM:1.5;
+  SEGS=Array.isArray(rec.segs)?rec.segs:[]; BPM=rec.bpm||0; KEYLABEL=rec.key||'—'; DURATION=rec.duration||0; BEATDUR=BPM>0?60/BPM:1.5;
   renderAll();
 }
 
@@ -498,8 +498,10 @@ async function analyze(audioBuf){
     else segs.push({label:labels[i],start:t,end:t});}
   if(segs.length) segs[segs.length-1].end=DURATION;
   for(let i=0;i<segs.length-1;i++) segs[i].end=segs[i+1].start;
-  segs=segs.filter(s=>s.label!=='N'&&(s.end-s.start)>=0.6);
-  segs=mergeAdjacent(segs);
+  // адаптивный фильтр: если строгий порог всё вычистил — смягчаем, чтобы лента не была пустой
+  const filt=md=>mergeAdjacent(segs.filter(s=>s.label!=='N'&&(s.end-s.start)>=md));
+  let out=filt(0.6); if(!out.length) out=filt(0.3); if(!out.length) out=mergeAdjacent(segs.filter(s=>s.label!=='N'));
+  segs=out;
 
   SEGS=segs; BPM=estimateTempo(mono,sr); BEATDUR=BPM>0?60/BPM:1.5;
   setStatus('Готово',1); await sleep(120);
@@ -589,6 +591,9 @@ function renderAll(){
       frag.appendChild(el); RBLOCKS.push({el,start:s.start,end:s.end});
     });
     ribbon.appendChild(frag);
+  } else {
+    ribbon.style.width='100%'; ribbon.style.backgroundImage='none';
+    ribbon.innerHTML='<div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--muted);font-family:IBM Plex Mono,monospace;font-size:13px;padding:16px">Аккорды не распознались.<br>Загрузи файл заново кнопкой «Выбрать песню» — эта песня в библиотеке сохранена старой версией.</div>';
   }
 
   // аппликатуры
