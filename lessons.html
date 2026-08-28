@@ -44,8 +44,7 @@
   .lesson.done .node{background:var(--teal);border-color:var(--teal);color:#14161c}
   .lesson.current .node{border-color:var(--amber);color:var(--amber);box-shadow:0 0 0 4px rgba(232,163,61,.14)}
   .lesson.locked .node{color:var(--muted);opacity:.6}
-  .card{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 18px;
-    cursor:pointer;transition:border-color .15s}
+  .card{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 18px;cursor:pointer;transition:border-color .15s}
   .card:hover{border-color:var(--amber)}
   .lesson.locked .card{cursor:not-allowed;opacity:.55}
   .lesson.locked .card:hover{border-color:var(--line)}
@@ -66,52 +65,46 @@
   .learn h2{font-size:26px;font-weight:700}
   .learn h2 .lat{color:var(--muted);font-size:18px;font-weight:500;margin-left:8px}
   .steps{margin-top:16px;display:flex;flex-direction:column;gap:10px}
-  .step{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);
-    border-radius:11px;padding:11px 14px;font-size:14px}
-  .step .fdot{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
-    color:#14161c;font-weight:700;font-family:"IBM Plex Mono",monospace;font-size:13px}
+  .step{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 14px;font-size:14px}
+  .step .fdot{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#14161c;font-weight:700;font-family:"IBM Plex Mono",monospace;font-size:13px}
   .step.open .fdot{background:none;border:2px solid var(--muted);color:var(--muted)}
   .step.mute .fdot{background:none;border:2px solid #6b7280;color:#6b7280}
   .tip{margin-top:16px;color:var(--muted);font-size:14px;line-height:1.6}
   .row-btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
-  .cta{background:var(--amber);color:#14161c;border:none;font-family:inherit;font-weight:700;font-size:16px;
-    padding:14px 28px;border-radius:12px;cursor:pointer;transition:transform .1s,box-shadow .12s}
+  .cta{background:var(--amber);color:#14161c;border:none;font-family:inherit;font-weight:700;font-size:16px;padding:14px 28px;border-radius:12px;cursor:pointer;transition:transform .1s,box-shadow .12s}
   .cta:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(232,163,61,.28)}
-  .ghost{background:var(--panel);color:var(--ink);border:1px solid var(--line);font-family:inherit;
-    font-weight:600;font-size:15px;padding:14px 24px;border-radius:12px;cursor:pointer}
+  .ghost{background:var(--panel);color:var(--ink);border:1px solid var(--line);font-family:inherit;font-weight:600;font-size:15px;padding:14px 24px;border-radius:12px;cursor:pointer}
   .ghost:hover{border-color:var(--teal)}
 
-  /* практика */
-  .prac{text-align:center;max-width:540px;margin:0 auto}
-  .pattern-name{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;color:var(--teal);text-transform:uppercase}
-  .now-chord{font-size:clamp(40px,11vw,76px);font-weight:700;letter-spacing:-.02em;margin:2px 0}
+  /* практика-игра */
+  .prac{max-width:640px;margin:0 auto}
+  .pattern-name{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;color:var(--teal);text-transform:uppercase;text-align:center;margin-bottom:12px}
+  .game-wrap{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+  canvas#game{width:100%;height:280px;display:block}
+  .count-overlay{position:absolute;inset:0;display:grid;place-items:center;font-size:80px;font-weight:700;
+    color:#fff;text-shadow:0 4px 20px rgba(0,0,0,.5);pointer-events:none}
+  .cur-row{display:flex;gap:16px;align-items:center;justify-content:center;margin-top:16px;flex-wrap:wrap}
+  .cur-info{text-align:left}
+  .now-chord{font-size:40px;font-weight:700;letter-spacing:-.02em;line-height:1}
   .now-chord.min{color:var(--teal)} .now-chord.maj{color:var(--amber)}
-  .dia-big{margin:6px auto 0;width:max-content}
-  .beats{display:flex;justify-content:center;gap:12px;margin:18px 0 10px}
-  .beat{width:14px;height:14px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line)}
-  .beat.on{background:var(--amber);border-color:var(--amber);transform:scale(1.25)}
-  .arrows{display:flex;justify-content:center;gap:6px;margin:8px 0}
-  .arrow{width:36px;height:44px;border-radius:9px;background:var(--panel);border:1px solid var(--line);
-    display:grid;place-items:center;font-size:20px;color:var(--muted)}
-  .arrow.d{color:var(--amber)} .arrow.u{color:var(--teal)}
-  .arrow.rest{color:#3a4050}
+  .coming{color:var(--muted);font-family:"IBM Plex Mono",monospace;font-size:13px;margin-top:4px;min-height:18px}
+  .arrows{display:flex;justify-content:center;gap:6px;margin:16px 0 0}
+  .arrow{width:34px;height:42px;border-radius:9px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;font-size:19px;color:var(--muted)}
+  .arrow.d{color:var(--amber)} .arrow.u{color:var(--teal)} .arrow.rest{color:#3a4050}
   .arrow.on{transform:translateY(-4px);box-shadow:0 6px 16px rgba(0,0,0,.4);border-color:currentColor}
-  .coming{color:var(--muted);font-family:"IBM Plex Mono",monospace;font-size:14px;margin-top:6px;min-height:20px}
-  .countdown{font-size:60px;font-weight:700;color:var(--amber);min-height:70px}
-  .controls-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px;flex-wrap:wrap}
+  .controls-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px;flex-wrap:wrap}
   .tempo{display:flex;align-items:center;gap:12px}
   .tempo button{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:20px;cursor:pointer}
-  .tempo .bpm{font-family:"IBM Plex Mono",monospace;font-size:15px;min-width:84px}
+  .tempo .bpm{font-family:"IBM Plex Mono",monospace;font-size:15px;min-width:84px;text-align:center}
   .toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none}
   .toggle input{width:16px;height:16px;accent-color:var(--amber)}
-  .prac-controls{margin-top:22px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .prac-controls{margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
   .btn{font-family:inherit;font-weight:600;font-size:15px;padding:13px 26px;border-radius:12px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
   .btn.primary{background:var(--amber);border-color:var(--amber);color:#14161c}
-  .done-banner{background:var(--teal);color:#14161c;border-radius:14px;padding:20px;margin-top:22px;font-weight:600;text-align:center;display:none}
+  .done-banner{background:var(--teal);color:#14161c;border-radius:14px;padding:20px;margin-top:20px;font-weight:600;text-align:center;display:none}
   .done-banner.on{display:block}
 
-  footer{margin-top:48px;color:var(--muted);font-size:12px;font-family:"IBM Plex Mono",monospace;
-    border-top:1px solid var(--line);padding-top:16px;text-align:center}
+  footer{margin-top:48px;color:var(--muted);font-size:12px;font-family:"IBM Plex Mono",monospace;border-top:1px solid var(--line);padding-top:16px;text-align:center}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -125,8 +118,8 @@
 
   <div class="screen on" id="screen-path">
     <h1>Учись играть <span class="accent">по шагам</span></h1>
-    <p class="lede">Каждый палец — своим цветом. Проходи уроки по порядку: аккорд, потом
-    практика под метроном с настоящим звуком гитары и стрелками боя. Прогресс сохраняется.</p>
+    <p class="lede">Каждый палец — своим цветом. В практике аккорды едут по дорожке к линии,
+    шарик отбивает такт, а гитара звучит по-настоящему. Прогресс сохраняется.</p>
     <div class="legend">
       <div class="chip"><span class="dot" style="background:var(--f1)">1</span>указательный</div>
       <div class="chip"><span class="dot" style="background:var(--f2)">2</span>средний</div>
@@ -137,10 +130,7 @@
   </div>
 
   <div class="screen" id="screen-lesson">
-    <div class="lesson-head">
-      <div class="brand" id="lesson-kicker">урок</div>
-      <button class="back" id="lesson-back">← К урокам</button>
-    </div>
+    <div class="lesson-head"><div class="brand" id="lesson-kicker">урок</div><button class="back" id="lesson-back">← К урокам</button></div>
     <div class="learn">
       <div class="dia" id="lesson-dia"></div>
       <div class="info">
@@ -156,31 +146,29 @@
   </div>
 
   <div class="screen" id="screen-prac">
-    <div class="lesson-head">
-      <div class="brand" id="prac-kicker">практика</div>
-      <button class="back" id="prac-back">← Выйти</button>
-    </div>
+    <div class="lesson-head"><div class="brand" id="prac-kicker">практика</div><button class="back" id="prac-back">← Выйти</button></div>
     <div class="prac">
       <div class="pattern-name" id="prac-pattern"></div>
-      <div class="coming" id="prac-hint"></div>
-      <div class="countdown" id="prac-count"></div>
-      <div class="now-chord" id="prac-chord">—</div>
-      <div class="dia-big" id="prac-dia"></div>
-      <div class="beats" id="prac-beats"></div>
-      <div class="arrows" id="prac-arrows"></div>
-      <div class="coming" id="prac-next"></div>
-      <div class="controls-row">
-        <div class="tempo">
-          <button id="bpm-down">–</button>
-          <span class="bpm" id="bpm-val">60 BPM</span>
-          <button id="bpm-up">+</button>
+      <div class="game-wrap">
+        <canvas id="game"></canvas>
+        <div class="count-overlay" id="prac-count"></div>
+      </div>
+      <div class="cur-row">
+        <div id="prac-dia"></div>
+        <div class="cur-info">
+          <div class="now-chord" id="prac-chord">—</div>
+          <div class="coming" id="prac-next"></div>
         </div>
+      </div>
+      <div class="arrows" id="prac-arrows"></div>
+      <div class="controls-row">
+        <div class="tempo"><button id="bpm-down">–</button><span class="bpm" id="bpm-val">60 BPM</span><button id="bpm-up">+</button></div>
         <label class="toggle"><input type="checkbox" id="sound-toggle" checked>звук гитары</label>
       </div>
       <div class="prac-controls">
-        <button class="btn primary" id="prac-start">Начать</button>
+        <button class="btn primary" id="prac-start">▶ Начать</button>
         <button class="btn" id="prac-listen">🔊 Образец</button>
-        <button class="btn" id="prac-stop" style="display:none">Стоп</button>
+        <button class="btn" id="prac-stop" style="display:none">■ Стоп</button>
       </div>
       <div class="done-banner" id="prac-done">Урок пройден! 🎸 Следующий открыт.</div>
     </div>
@@ -190,71 +178,55 @@
 </div>
 
 <script>
-// ---------- Аккорды (низкая E → высокая e) ----------
+// ---------- Аккорды ----------
 const CHORDS={
-  'Em':{frets:[0,2,2,0,0,0],fingers:[0,2,3,0,0,0]},
-  'Am':{frets:[-1,0,2,2,1,0],fingers:[0,0,2,3,1,0]},
-  'E' :{frets:[0,2,2,1,0,0],fingers:[0,2,3,1,0,0]},
-  'A' :{frets:[-1,0,2,2,2,0],fingers:[0,0,1,2,3,0]},
-  'Dm':{frets:[-1,-1,0,2,3,1],fingers:[0,0,0,2,3,1]},
-  'D' :{frets:[-1,-1,0,2,3,2],fingers:[0,0,0,1,3,2]},
-  'C' :{frets:[-1,3,2,0,1,0],fingers:[0,3,2,0,1,0]},
-  'G' :{frets:[3,2,0,0,0,3],fingers:[2,1,0,0,0,3]},
-  'A7':{frets:[-1,0,2,0,2,0],fingers:[0,0,2,0,3,0]},
-  'E7':{frets:[0,2,0,1,0,0],fingers:[0,2,0,1,0,0]},
-  'D7':{frets:[-1,-1,0,2,1,2],fingers:[0,0,0,2,1,3]},
-  'G7':{frets:[3,2,0,0,0,1],fingers:[3,2,0,0,0,1]},
-  'Cadd9':{frets:[-1,3,2,0,3,0],fingers:[0,2,1,0,3,0]},
-  'Fmaj7':{frets:[-1,-1,3,2,1,0],fingers:[0,0,3,2,1,0]},
-  'F' :{frets:[1,3,3,2,1,1],fingers:[1,3,4,2,1,1]},
-  'Bm':{frets:[-1,2,4,4,3,2],fingers:[0,1,3,4,2,1]}
+  'Em':{frets:[0,2,2,0,0,0],fingers:[0,2,3,0,0,0]},'Am':{frets:[-1,0,2,2,1,0],fingers:[0,0,2,3,1,0]},
+  'E' :{frets:[0,2,2,1,0,0],fingers:[0,2,3,1,0,0]},'A' :{frets:[-1,0,2,2,2,0],fingers:[0,0,1,2,3,0]},
+  'Dm':{frets:[-1,-1,0,2,3,1],fingers:[0,0,0,2,3,1]},'D' :{frets:[-1,-1,0,2,3,2],fingers:[0,0,0,1,3,2]},
+  'C' :{frets:[-1,3,2,0,1,0],fingers:[0,3,2,0,1,0]},'G' :{frets:[3,2,0,0,0,3],fingers:[2,1,0,0,0,3]},
+  'A7':{frets:[-1,0,2,0,2,0],fingers:[0,0,2,0,3,0]},'E7':{frets:[0,2,0,1,0,0],fingers:[0,2,0,1,0,0]},
+  'D7':{frets:[-1,-1,0,2,1,2],fingers:[0,0,0,2,1,3]},'G7':{frets:[3,2,0,0,0,1],fingers:[3,2,0,0,0,1]},
+  'Cadd9':{frets:[-1,3,2,0,3,0],fingers:[0,2,1,0,3,0]},'Fmaj7':{frets:[-1,-1,3,2,1,0],fingers:[0,0,3,2,1,0]},
+  'F' :{frets:[1,3,3,2,1,1],fingers:[1,3,4,2,1,1]},'Bm':{frets:[-1,2,4,4,3,2],fingers:[0,1,3,4,2,1]}
 };
 const FCOLOR_HEX={1:'#e8a33d',2:'#5fb3b3',3:'#b57edc',4:'#6cc98f'};
 const FNAME={1:'Указательный',2:'Средний',3:'Безымянный',4:'Мизинец'};
 const STR_NOTES=['ми (толстая)','ля','ре','соль','си','ми (тонкая)'];
-const OPEN_MIDI=[40,45,50,55,59,64]; // E2 A2 D3 G3 B3 E4
-function isMin(c){return /m$/.test(c) && !/maj/i.test(c);}
+const OPEN_MIDI=[40,45,50,55,59,64];
+const PALETTE=['#6cc98f','#5fb3b3','#e8a33d','#b57edc','#e8687a','#7aa2f7'];
+function isMin(c){return /m$/.test(c)&&!/maj/i.test(c);}
 
-// ---------- Паттерны боя (8 восьмых на такт) ----------
 const PATTERNS={
-  'downs':  {name:'Четвертями вниз', steps:['D','','D','','D','','D','']},
-  'eighths':{name:'Восьмыми ↓↑',     steps:['D','U','D','U','D','U','D','U']},
-  'six':    {name:'«Шестёрка»',      steps:['D','','D','U','','U','D','U']}
+  'downs':{name:'Четвертями вниз',steps:['D','','D','','D','','D','']},
+  'eighths':{name:'Восьмыми ↓↑',steps:['D','U','D','U','D','U','D','U']},
+  'six':{name:'«Шестёрка»',steps:['D','','D','U','','U','D','U']}
 };
 
-// ---------- Уроки ----------
 const LESSONS=[
   {id:'em',type:'chord',chord:'Em',title:'Ми-минор',tip:'Самый лёгкий аккорд — два пальца рядом.'},
   {id:'am',type:'chord',chord:'Am',title:'Ля-минор',tip:'Три пальца. 1-я (тонкая) струна звучит открыто.'},
-  {id:'r-downs',type:'song',title:'Бой: четвертями вниз',chords:['Em','Am','Em','Am'],bpm:55,pattern:'downs',
-    tip:'Самый простой ритм — удар вниз на каждый счёт. Держи ровно, слушай метроном.'},
+  {id:'r-downs',type:'song',title:'Бой: четвертями вниз',chords:['Em','Am','Em','Am'],bpm:55,pattern:'downs',tip:'Самый простой ритм — удар вниз на каждый счёт.'},
   {id:'e',type:'chord',chord:'E',title:'Ми-мажор',tip:'Как Em плюс указательный на 1-й лад 3-й струны.'},
   {id:'a',type:'chord',chord:'A',title:'Ля-мажор',tip:'Три пальца в ряд на 2-м ладу. 6-ю струну не играем.'},
   {id:'d',type:'chord',chord:'D',title:'Ре-мажор',tip:'Толстые струны 6 и 5 не играем, пальцы — треугольником.'},
-  {id:'s-ead',type:'song',title:'Песня: E → A → D',chords:['E','A','D','A'],bpm:60,pattern:'eighths',
-    tip:'Три главных мажорных аккорда, ритм восьмыми ↓↑.'},
+  {id:'s-ead',type:'song',title:'Песня: E → A → D',chords:['E','A','D','A'],bpm:60,pattern:'eighths',tip:'Три главных мажорных аккорда, ритм восьмыми ↓↑.'},
   {id:'c',type:'chord',chord:'C',title:'До-мажор',tip:'Растяжка шире. 6-ю (толстую) струну не задевай.'},
   {id:'g',type:'chord',chord:'G',title:'Соль-мажор',tip:'Пальцы разъезжаются широко — это нормально.'},
-  {id:'r-six',type:'song',title:'Бой: «шестёрка»',chords:['Em','Em','Am','Am'],bpm:60,pattern:'six',
-    tip:'Классический бой: вниз, вниз-вверх, вверх-вниз-вверх. Смотри на стрелки.'},
-  {id:'s-cgam',type:'song',title:'Песня: C → G → Am',chords:['C','G','Am','G'],bpm:62,pattern:'six',
-    tip:'Основа тысяч песен. Тренируй быстрый переход C→G «шестёркой».'},
+  {id:'r-six',type:'song',title:'Бой: «шестёрка»',chords:['Em','Em','Am','Am'],bpm:60,pattern:'six',tip:'Классический бой: вниз, вниз-вверх, вверх-вниз-вверх. Смотри на стрелки.'},
+  {id:'s-cgam',type:'song',title:'Песня: C → G → Am',chords:['C','G','Am','G'],bpm:62,pattern:'six',tip:'Основа тысяч песен. Тренируй переход C→G.'},
   {id:'a7',type:'chord',chord:'A7',title:'Ля-мажор 7 (A7)',tip:'Как A, но проще — два пальца. Звучит «блюзово».'},
   {id:'e7',type:'chord',chord:'E7',title:'Ми-мажор 7 (E7)',tip:'Как E без безымянного — легче и с характером.'},
   {id:'d7',type:'chord',chord:'D7',title:'Ре-мажор 7 (D7)',tip:'Септаккорд ре. Часто ведёт к соль-мажору.'},
-  {id:'s-blues',type:'song',title:'Блюз: E7 → A7',chords:['E7','A7','E7','A7'],bpm:70,pattern:'six',
-    tip:'Простейший блюзовый квадрат на септаккордах.'},
+  {id:'s-blues',type:'song',title:'Блюз: E7 → A7',chords:['E7','A7','E7','A7'],bpm:70,pattern:'six',tip:'Простейший блюзовый квадрат на септаккордах.'},
   {id:'cadd9',type:'chord',chord:'Cadd9',title:'До с девятой (Cadd9)',tip:'Красивый «поп-аккорд». Легко чередуется с G.'},
-  {id:'fmaj7',type:'chord',chord:'Fmaj7',title:'Фа-мажор 7 (Fmaj7)',tip:'Лёгкая замена сложному F — без баррэ, всего 3 пальца.'},
-  {id:'s-final1',type:'song',title:'Песня: C → G → Am → Fmaj7',chords:['C','G','Am','Fmaj7'],bpm:66,pattern:'six',
-    tip:'Собери всё вместе. Это уже настоящая песня!'},
-  {id:'f',type:'chord',chord:'F',title:'Фа-мажор (F, баррэ)',tip:'Сложный аккорд: указательный прижимает все струны на 1-м ладу. Не расстраивайся, если не сразу.'},
-  {id:'bm',type:'chord',chord:'Bm',title:'Си-минор (Bm, баррэ)',tip:'Второй баррэ-аккорд. Указательный — на 2-м ладу через все струны.'},
-  {id:'s-final2',type:'song',title:'Финал: Am → F → C → G',chords:['Am','F','C','G'],bpm:70,pattern:'six',
-    tip:'Мощная последовательность с баррэ. Пройдёшь — ты уже гитарист!'}
+  {id:'fmaj7',type:'chord',chord:'Fmaj7',title:'Фа-мажор 7 (Fmaj7)',tip:'Лёгкая замена сложному F — без баррэ, три пальца.'},
+  {id:'s-final1',type:'song',title:'Песня: C → G → Am → Fmaj7',chords:['C','G','Am','Fmaj7'],bpm:66,pattern:'six',tip:'Собери всё вместе — это уже настоящая песня!'},
+  {id:'f',type:'chord',chord:'F',title:'Фа-мажор (F, баррэ)',tip:'Указательный прижимает все струны на 1-м ладу. Не сразу — это нормально.'},
+  {id:'bm',type:'chord',chord:'Bm',title:'Си-минор (Bm, баррэ)',tip:'Второй баррэ: указательный на 2-м ладу через все струны.'},
+  {id:'s-final2',type:'song',title:'Финал: Am → F → C → G',chords:['Am','F','C','G'],bpm:70,pattern:'six',tip:'Мощная последовательность с баррэ. Пройдёшь — ты гитарист!'}
 ];
 
-// ---------- Отрисовка аккорда (цвет по пальцу, поддержка баррэ) ----------
+// ---------- Схема аккорда ----------
 function drawChord(chord,scale){
   const d=CHORDS[chord]; if(!d) return ''; const s=scale||1;
   const W=124*s,H=150*s,x0=22*s,x1=104*s,yTop=34*s,rows=4;
@@ -264,10 +236,8 @@ function drawChord(chord,scale){
   const xs=i=>x0+i*sg, rowY=fr=>yTop+(fr-start+0.5)*fh;
   let o=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">`;
   for(let i=0;i<6;i++) o+=`<line x1="${xs(i)}" y1="${yTop}" x2="${xs(i)}" y2="${yTop+rows*fh}" stroke="#3a4050" stroke-width="${1.2*s}"/>`;
-  for(let r=0;r<=rows;r++){const y=yTop+r*fh;const sw=(r===0&&start===1)?4*s:1.2*s;
-    o+=`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="#3a4050" stroke-width="${sw}"/>`;}
+  for(let r=0;r<=rows;r++){const y=yTop+r*fh;const sw=(r===0&&start===1)?4*s:1.2*s;o+=`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="#3a4050" stroke-width="${sw}"/>`;}
   if(start>1) o+=`<text x="${x0-8*s}" y="${yTop+fh*0.7}" fill="#8a8f9c" font-size="${11*s}" font-family="IBM Plex Mono,monospace" text-anchor="end">${start}</text>`;
-  // баррэ
   const minFret=fretted.length?Math.min(...fretted):0; const atMin=[];
   for(let i=0;i<6;i++) if(minFret>0&&f[i]===minFret)atMin.push(i);
   let barre=null;
@@ -289,31 +259,23 @@ function drawChord(chord,scale){
 // ---------- Звук гитары (Карплус-Стронг) ----------
 let actx=null; const ksCache={};
 function ensureCtx(){ if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended')actx.resume(); return actx; }
-function ksBuffer(midi){
-  const key=Math.round(midi); if(ksCache[key]) return ksCache[key];
-  const ctx=ensureCtx(), sr=ctx.sampleRate, freq=440*Math.pow(2,(midi-69)/12);
-  const N=Math.max(2,Math.round(sr/freq)), len=Math.round(sr*1.3);
-  const buf=ctx.createBuffer(1,len,sr), data=buf.getChannelData(0), line=new Float32Array(N);
-  for(let i=0;i<N;i++)line[i]=Math.random()*2-1;
-  let idx=0; const decay=0.995;
+function ksBuffer(midi){ const key=Math.round(midi); if(ksCache[key])return ksCache[key];
+  const ctx=ensureCtx(),sr=ctx.sampleRate,freq=440*Math.pow(2,(midi-69)/12),N=Math.max(2,Math.round(sr/freq)),len=Math.round(sr*1.3);
+  const buf=ctx.createBuffer(1,len,sr),data=buf.getChannelData(0),line=new Float32Array(N);
+  for(let i=0;i<N;i++)line[i]=Math.random()*2-1; let idx=0; const decay=0.995;
   for(let i=0;i<len;i++){const cur=line[idx],nxt=line[(idx+1)%N],v=(cur+nxt)*0.5*decay;data[i]=cur;line[idx]=v;idx=(idx+1)%N;}
-  const fade=Math.round(sr*0.06); for(let i=0;i<fade;i++)data[len-1-i]*=i/fade;
-  ksCache[key]=buf; return buf;
-}
-function playNote(midi,when,gain){ const ctx=ensureCtx(); const src=ctx.createBufferSource();
-  src.buffer=ksBuffer(midi); const g=ctx.createGain(); g.gain.value=gain; src.connect(g); g.connect(ctx.destination); src.start(when); }
-function playChord(chord,dir){
-  const ctx=ensureCtx(), d=CHORDS[chord]; if(!d)return;
-  const notes=[]; for(let i=0;i<6;i++){ if(d.frets[i]>=0) notes.push(OPEN_MIDI[i]+d.frets[i]); }
-  if(dir==='U') notes.reverse();
-  const t0=ctx.currentTime+0.02, gap=0.016;
-  notes.forEach((m,k)=>playNote(m,t0+k*gap,0.26));
-}
-function precache(chords){ chords.forEach(c=>{const d=CHORDS[c];if(d)for(let i=0;i<6;i++)if(d.frets[i]>=0)ksBuffer(OPEN_MIDI[i]+d.frets[i]);}); }
-function click(accent){ try{const ctx=ensureCtx();const o=ctx.createOscillator(),g=ctx.createGain();
+  const fade=Math.round(sr*0.06); for(let i=0;i<fade;i++)data[len-1-i]*=i/fade; ksCache[key]=buf; return buf; }
+function playNote(midi,when,gain){const ctx=ensureCtx();const src=ctx.createBufferSource();src.buffer=ksBuffer(midi);
+  const g=ctx.createGain();g.gain.value=gain;src.connect(g);g.connect(ctx.destination);src.start(when);}
+function playChord(chord,dir){const ctx=ensureCtx(),d=CHORDS[chord];if(!d)return;
+  const notes=[];for(let i=0;i<6;i++){if(d.frets[i]>=0)notes.push(OPEN_MIDI[i]+d.frets[i]);}
+  if(dir==='U')notes.reverse(); const t0=ctx.currentTime+0.02,gap=0.016;
+  notes.forEach((m,k)=>playNote(m,t0+k*gap,0.26));}
+function precache(chords){chords.forEach(c=>{const d=CHORDS[c];if(d)for(let i=0;i<6;i++)if(d.frets[i]>=0)ksBuffer(OPEN_MIDI[i]+d.frets[i]);});}
+function click(accent){try{const ctx=ensureCtx();const o=ctx.createOscillator(),g=ctx.createGain();
   o.frequency.value=accent?1300:820;o.connect(g);g.connect(ctx.destination);
   g.gain.setValueAtTime(0.0001,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.3,ctx.currentTime+0.001);
-  g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.07);o.start();o.stop(ctx.currentTime+0.08);}catch(e){} }
+  g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.07);o.start();o.stop(ctx.currentTime+0.08);}catch(e){}}
 
 // ---------- Прогресс ----------
 const KEY='guitarLessonsProgress';
@@ -325,11 +287,10 @@ function isUnlocked(idx){ if(idx===0)return true; return getDone().includes(LESS
 const $=id=>document.getElementById(id);
 function show(sc){['screen-path','screen-lesson','screen-prac'].forEach(s=>$(s).classList.toggle('on',s===sc));window.scrollTo({top:0,behavior:'smooth'});}
 
-// ---------- Путь ----------
 function renderPath(){
-  const done=getDone(), path=$('path'); path.innerHTML='';
+  const done=getDone(),path=$('path');path.innerHTML='';
   LESSONS.forEach((L,idx)=>{
-    const unlocked=isUnlocked(idx), isDone=done.includes(L.id), cur=unlocked&&!isDone;
+    const unlocked=isUnlocked(idx),isDone=done.includes(L.id),cur=unlocked&&!isDone;
     const row=document.createElement('div');
     row.className='lesson '+(isDone?'done':cur?'current':unlocked?'':'locked');
     const node=isDone?'✓':unlocked?(idx+1):'🔒';
@@ -341,71 +302,119 @@ function renderPath(){
   });
 }
 
-// ---------- Урок ----------
 let curIdx=0;
-function openLesson(idx){ curIdx=idx; const L=LESSONS[idx];
-  if(L.type==='chord') openChordLesson(L,idx); else openPractice(L,idx); }
+function openLesson(idx){curIdx=idx;const L=LESSONS[idx];if(L.type==='chord')openChordLesson(L,idx);else openPractice(L,idx);}
 function openChordLesson(L,idx){
   $('lesson-kicker').textContent=`Урок ${idx+1} · аккорд`;
   $('lesson-dia').innerHTML=drawChord(L.chord,1.15);
   $('lesson-title').innerHTML=`${L.title} <span class="lat">${L.chord}</span>`;
-  const d=CHORDS[L.chord], steps=$('lesson-steps'); steps.innerHTML='';
-  for(let i=0;i<6;i++){ if(d.frets[i]>0){const fg=d.fingers[i]||1;const el=document.createElement('div');el.className='step';
-    el.innerHTML=`<span class="fdot" style="background:${FCOLOR_HEX[fg]}">${fg}</span>${FNAME[fg]} — ${d.frets[i]}-й лад, ${6-i}-я струна (${STR_NOTES[i]})`;steps.appendChild(el);} }
-  const openS=[],muteS=[]; for(let i=0;i<6;i++){if(d.frets[i]===0)openS.push(6-i);if(d.frets[i]===-1)muteS.push(6-i);}
+  const d=CHORDS[L.chord],steps=$('lesson-steps');steps.innerHTML='';
+  for(let i=0;i<6;i++){if(d.frets[i]>0){const fg=d.fingers[i]||1;const el=document.createElement('div');el.className='step';
+    el.innerHTML=`<span class="fdot" style="background:${FCOLOR_HEX[fg]}">${fg}</span>${FNAME[fg]} — ${d.frets[i]}-й лад, ${6-i}-я струна (${STR_NOTES[i]})`;steps.appendChild(el);}}
+  const openS=[],muteS=[];for(let i=0;i<6;i++){if(d.frets[i]===0)openS.push(6-i);if(d.frets[i]===-1)muteS.push(6-i);}
   if(openS.length){const el=document.createElement('div');el.className='step open';el.innerHTML=`<span class="fdot">○</span>Открытые струны: ${openS.join(', ')}`;steps.appendChild(el);}
   if(muteS.length){const el=document.createElement('div');el.className='step mute';el.innerHTML=`<span class="fdot">×</span>Не играем: ${muteS.join(', ')}`;steps.appendChild(el);}
-  $('lesson-tip').textContent=L.tip||'';
-  show('screen-lesson');
+  $('lesson-tip').textContent=L.tip||''; show('screen-lesson');
 }
 $('lesson-back').addEventListener('click',()=>{renderPath();show('screen-path');});
 $('lesson-practice').addEventListener('click',()=>openPractice(LESSONS[curIdx],curIdx));
 $('lesson-listen').addEventListener('click',()=>{ensureCtx();playChord(LESSONS[curIdx].chord,'D');});
 
-// ---------- Практика ----------
-let bpm=60, seq=[], loops=1, pattern=PATTERNS.downs.steps, practicing=false, timer=null, soundOn=true;
+// ---------- Практика-игра (Canvas) ----------
+let bpm=60,seq=[],loops=1,pattern=PATTERNS.downs.steps,practicing=false,rafId=null,soundOn=true;
+let seqColors={},curDrawChord=null,CW=0,CH=0;
+const cv=$('game'),ctx2=cv.getContext('2d');
+
+function colorFor(chord){return seqColors[chord]||'#e8a33d';}
+function resizeCanvas(){const rect=cv.getBoundingClientRect();const dpr=window.devicePixelRatio||1;
+  cv.width=Math.max(1,rect.width*dpr);cv.height=Math.max(1,rect.height*dpr);ctx2.setTransform(dpr,0,0,dpr,0,0);CW=rect.width;CH=rect.height;}
+function rrect(x,y,w,h,r){ctx2.beginPath();ctx2.moveTo(x+r,y);ctx2.arcTo(x+w,y,x+w,y+h,r);ctx2.arcTo(x+w,y+h,x,y+h,r);ctx2.arcTo(x,y+h,x,y,r);ctx2.arcTo(x,y,x+w,y,r);ctx2.closePath();}
+
+function drawGame(bp,total){
+  if(CW===0)resizeCanvas();
+  // фон-«небо» и «дорога»
+  const g=ctx2.createLinearGradient(0,0,0,CH);
+  g.addColorStop(0,'#171b24');g.addColorStop(0.28,'#1d2430');g.addColorStop(1,'#12151c');
+  ctx2.fillStyle=g;ctx2.fillRect(0,0,CW,CH);
+  const bandTop=CH*0.24,bandBot=CH*0.80,hitX=CW*0.26,pxPerBeat=CW/12;
+  // струны
+  ctx2.strokeStyle='#333a47';ctx2.lineWidth=1.6;
+  for(let i=0;i<6;i++){const y=bandTop+(bandBot-bandTop)*i/5;ctx2.beginPath();ctx2.moveTo(0,y);ctx2.lineTo(CW,y);ctx2.stroke();}
+  // блоки
+  for(let b=0;b<total;b++){
+    const x=hitX+(b*4-bp)*pxPerBeat, w=4*pxPerBeat-10;
+    if(x>CW+40||x+w<-40)continue;
+    const chord=seq[b%seq.length],col=colorFor(chord);
+    const active=(x<=hitX+2 && x+w>=hitX-2);
+    rrect(x,bandTop-10,w,(bandBot-bandTop)+20,12);
+    ctx2.fillStyle=col;ctx2.globalAlpha=active?1:0.8;ctx2.fill();ctx2.globalAlpha=1;
+    if(active){ctx2.save();rrect(x,bandTop-10,w,(bandBot-bandTop)+20,12);ctx2.lineWidth=3;ctx2.strokeStyle='#fff';ctx2.globalAlpha=0.85;ctx2.stroke();ctx2.restore();}
+    ctx2.fillStyle='#14161c';ctx2.font='700 '+Math.min(42,Math.max(20,w*0.42))+'px "Space Grotesk",sans-serif';
+    ctx2.textAlign='center';ctx2.textBaseline='middle';ctx2.fillText(chord,x+w/2,(bandTop+bandBot)/2);
+  }
+  // линия попадания
+  ctx2.strokeStyle='rgba(255,255,255,.55)';ctx2.lineWidth=3;
+  ctx2.beginPath();ctx2.moveTo(hitX,bandTop-24);ctx2.lineTo(hitX,bandBot+24);ctx2.stroke();
+  // прыгающий шарик
+  const frac=bp-Math.floor(bp);const amp=44;
+  const by=(bandTop-30)-amp*Math.abs(Math.sin(Math.PI*frac));
+  ctx2.beginPath();ctx2.arc(hitX,by,9,0,Math.PI*2);ctx2.fillStyle='#fff';ctx2.fill();
+  ctx2.beginPath();ctx2.arc(hitX,by,9,0,Math.PI*2);ctx2.lineWidth=2;ctx2.strokeStyle='rgba(0,0,0,.25)';ctx2.stroke();
+  // прогресс снизу
+  const prog=Math.max(0,Math.min(1,bp/(total*4)));
+  ctx2.fillStyle='#2a2f3a';ctx2.fillRect(0,CH-5,CW,5);
+  ctx2.fillStyle='#e8a33d';ctx2.fillRect(0,CH-5,CW*prog,5);
+}
+
 function openPractice(L,idx){
-  curIdx=idx;
-  $('prac-kicker').textContent=`Урок ${idx+1} · практика`;
-  if(L.type==='chord'){ seq=[L.chord,L.chord,L.chord,L.chord]; loops=1; bpm=60; pattern=PATTERNS.downs.steps;
-    $('prac-pattern').textContent='Бой: четвертями вниз';
-    $('prac-hint').textContent='Держи аккорд и бей вниз на каждый счёт.'; }
-  else { seq=L.chords.slice(); loops=2; bpm=L.bpm||60; pattern=PATTERNS[L.pattern].steps;
-    $('prac-pattern').textContent='Бой: '+PATTERNS[L.pattern].name;
-    $('prac-hint').textContent='Играй по стрелкам, меняй аккорд каждый такт. Два круга.'; }
-  $('bpm-val').textContent=bpm+' BPM';
-  $('prac-done').classList.remove('on'); $('prac-count').textContent=''; $('prac-next').textContent='';
-  setChord(seq[0]); buildBeats(); buildArrows();
+  curIdx=idx; $('prac-kicker').textContent=`Урок ${idx+1} · практика`;
+  if(L.type==='chord'){seq=[L.chord,L.chord,L.chord,L.chord];loops=1;bpm=60;pattern=PATTERNS.downs.steps;
+    $('prac-pattern').textContent='Бой: четвертями вниз';}
+  else{seq=L.chords.slice();loops=2;bpm=L.bpm||60;pattern=PATTERNS[L.pattern].steps;
+    $('prac-pattern').textContent='Бой: '+PATTERNS[L.pattern].name;}
+  seqColors={}; [...new Set(seq)].forEach((c,i)=>seqColors[c]=PALETTE[i%PALETTE.length]);
+  $('bpm-val').textContent=bpm+' BPM'; $('prac-done').classList.remove('on'); $('prac-count').textContent=''; $('prac-next').textContent='';
+  curDrawChord=null; setChord(seq[0]); buildArrows();
   $('prac-start').style.display=''; $('prac-stop').style.display='none';
   show('screen-prac');
+  requestAnimationFrame(()=>{resizeCanvas();drawGame(-4,seq.length*loops);});
 }
-function setChord(c){const el=$('prac-chord');el.textContent=c;el.className='now-chord '+(isMin(c)?'min':'maj');$('prac-dia').innerHTML=drawChord(c,1);}
-function buildBeats(){const b=$('prac-beats');b.innerHTML='';for(let i=0;i<4;i++){const d=document.createElement('div');d.className='beat';b.appendChild(d);}}
-function litBeat(n){document.querySelectorAll('#prac-beats .beat').forEach((d,i)=>d.classList.toggle('on',i===n));}
+function setChord(c){const el=$('prac-chord');el.textContent=c;el.className='now-chord '+(isMin(c)?'min':'maj');$('prac-dia').innerHTML=drawChord(c,0.95);}
 function buildArrows(){const a=$('prac-arrows');a.innerHTML='';pattern.forEach(st=>{const d=document.createElement('div');
   d.className='arrow '+(st==='D'?'d':st==='U'?'u':'rest');d.textContent=st==='D'?'↓':st==='U'?'↑':'·';a.appendChild(d);});}
 function litArrow(n){document.querySelectorAll('#prac-arrows .arrow').forEach((d,i)=>d.classList.toggle('on',i===n));}
 
+let startTime=0,lastSub=-1,lastCb=-99;
 function startPractice(){
   if(practicing)return; practicing=true; ensureCtx(); precache(seq);
-  $('prac-start').style.display='none'; $('prac-stop').style.display=''; $('prac-done').classList.remove('on');
-  const total=seq.length*loops; let k=-8; const iv=(60000/bpm)/2;
-  const stepFn=()=>{
-    if(k<0){ if(k%2===0){click(true);$('prac-count').textContent=String((8+k)/2+1);} k++; return; }
-    $('prac-count').textContent='';
-    const bar=Math.floor(k/8); if(bar>=total){finishPractice();return;}
-    const sib=k%8; litBeat(Math.floor(sib/2)); litArrow(sib);
-    if(sib===0){const c=seq[bar%seq.length];setChord(c);const nx=seq[(bar+1)%seq.length];
-      $('prac-next').textContent=(bar+1<total)?('дальше: '+nx):'последний такт!';}
-    const st=pattern[sib];
-    if(st==='D'||st==='U'){ if(soundOn) playChord(seq[bar%seq.length],st); else click(sib===0); }
-    k++;
+  $('prac-start').style.display='none';$('prac-stop').style.display='';$('prac-done').classList.remove('on');
+  const total=seq.length*loops,beatMs=60000/bpm,count=4;
+  startTime=performance.now(); lastSub=-1; lastCb=-99;
+  const loop=(now)=>{
+    if(!practicing)return;
+    const bp=((now-startTime)/beatMs)-count;
+    if(bp<0){ $('prac-count').textContent=String(Math.max(1,Math.ceil(-bp)));
+      const cb=Math.floor(bp); if(cb!==lastCb){lastCb=cb;click(true);} }
+    else{
+      $('prac-count').textContent='';
+      const sub=Math.floor(bp*2);
+      if(sub>lastSub){ for(let s=lastSub+1;s<=sub;s++){const bar=Math.floor(s/8);if(bar<total){const sib=s%8,st=pattern[sib];
+        if(st==='D'||st==='U'){ soundOn?playChord(seq[bar%seq.length],st):click(sib===0);} }} lastSub=sub; }
+      const bar=Math.floor(bp/4);
+      if(bar<total){const c=seq[bar%seq.length]; if(c!==curDrawChord){curDrawChord=c;setChord(c);
+        $('prac-next').textContent=(bar+1<total)?('дальше: '+seq[(bar+1)%seq.length]):'последний такт!';}}
+      litArrow(((Math.floor(bp*2))%8+8)%8);
+    }
+    drawGame(bp,total);
+    if(bp>=total*4){finishPractice();return;}
+    rafId=requestAnimationFrame(loop);
   };
-  stepFn(); timer=setInterval(stepFn,iv);
+  rafId=requestAnimationFrame(loop);
 }
-function stopPractice(){ practicing=false; if(timer){clearInterval(timer);timer=null;} litBeat(-1); litArrow(-1); $('prac-count').textContent='';
-  $('prac-start').style.display=''; $('prac-stop').style.display='none'; }
-function finishPractice(){ stopPractice(); markDone(LESSONS[curIdx].id); $('prac-next').textContent=''; $('prac-done').classList.add('on'); }
+function stopPractice(){practicing=false;if(rafId){cancelAnimationFrame(rafId);rafId=null;} litArrow(-1); $('prac-count').textContent='';
+  $('prac-start').style.display='';$('prac-stop').style.display='none';}
+function finishPractice(){stopPractice();markDone(LESSONS[curIdx].id);$('prac-next').textContent='';$('prac-done').classList.add('on');
+  resizeCanvas();drawGame(seq.length*loops*4,seq.length*loops);}
 
 $('prac-start').addEventListener('click',startPractice);
 $('prac-stop').addEventListener('click',stopPractice);
@@ -414,6 +423,7 @@ $('prac-back').addEventListener('click',()=>{stopPractice();renderPath();show('s
 $('bpm-up').addEventListener('click',()=>{if(!practicing){bpm=Math.min(140,bpm+5);$('bpm-val').textContent=bpm+' BPM';}});
 $('bpm-down').addEventListener('click',()=>{if(!practicing){bpm=Math.max(40,bpm-5);$('bpm-val').textContent=bpm+' BPM';}});
 $('sound-toggle').addEventListener('change',e=>{soundOn=e.target.checked;});
+window.addEventListener('resize',()=>{if($('screen-prac').classList.contains('on')){resizeCanvas();if(!practicing)drawGame(-4,seq.length*loops||4);}});
 
 renderPath();
 </script>
