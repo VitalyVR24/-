@@ -310,8 +310,10 @@ function fft(re,im){
 const TEMPLATES=[];
 for(let r=0;r<12;r++)for(const q of ['maj','min']){
   const v=new Array(12).fill(0); const iv=q==='maj'?[0,4,7]:[0,3,7];
-  iv.forEach(x=>v[(r+x)%12]=1); const nrm=Math.sqrt(iv.length);
-  TEMPLATES.push({label:NAMES[r]+(q==='maj'?'':'m'),vec:v.map(x=>x/nrm)});
+  iv.forEach(x=>v[(r+x)%12]=1);
+  const mean=v.reduce((a,b)=>a+b,0)/12; const c=v.map(x=>x-mean);
+  const nrm=Math.sqrt(c.reduce((a,b)=>a+b*b,0))||1;
+  TEMPLATES.push({label:NAMES[r]+(q==='maj'?'':'m'),root:r,vec:c.map(x=>x/nrm)});
 }
 const WINDOW=new Float32Array(FFT_SIZE);
 for(let i=0;i<FFT_SIZE;i++) WINDOW[i]=0.5-0.5*Math.cos(2*Math.PI*i/(FFT_SIZE-1));
@@ -392,37 +394,73 @@ async function analyze(audioBuf){
   for(let i=0;i<N;i++) mono[i]=R?(L[i]+R[i])*0.5:L[i];
   DURATION=N/sr;
 
-  const frames=[]; const re=new Float32Array(FFT_SIZE), im=new Float32Array(FFT_SIZE);
+  const re=new Float32Array(FFT_SIZE), im=new Float32Array(FFT_SIZE);
   const totalFrames=Math.max(1,Math.floor((N-FFT_SIZE)/HOP)); let done=0;
+
+  // --- пасс 1: спектральные пики каждого кадра + оценка настройки (тюнинга) ---
+  const framePeaks=[]; let tuneSum=0,tuneW=0;
   for(let start=0; start+FFT_SIZE<=N; start+=HOP){
     for(let i=0;i<FFT_SIZE;i++){re[i]=mono[start+i]*WINDOW[i];im[i]=0;}
     fft(re,im);
-    const chroma=new Float32Array(12); let energy=0;
-    for(let k=1;k<FFT_SIZE/2;k++){
-      const f=k*sr/FFT_SIZE; if(f<55||f>2000)continue;
-      const mag=Math.hypot(re[k],im[k]); energy+=mag;
-      chroma[((Math.round(69+12*Math.log2(f/440))%12)+12)%12]+=mag;
+    let mx=0; const half=FFT_SIZE/2, mag=new Float32Array(half);
+    for(let k=0;k<half;k++){mag[k]=Math.hypot(re[k],im[k]); if(mag[k]>mx)mx=mag[k];}
+    const th=mx*0.05, pks=[];
+    for(let k=2;k<half-2;k++){
+      const f=k*sr/FFT_SIZE; if(f<70||f>1800)continue;
+      if(mag[k]>th && mag[k]>mag[k-1] && mag[k]>=mag[k+1]){
+        const d=0.5*(mag[k-1]-mag[k+1])/(mag[k-1]-2*mag[k]+mag[k+1]+1e-12);
+        const fr=(k+d)*sr/FFT_SIZE; pks.push({f:fr,m:mag[k]});
+        const midi=69+12*Math.log2(fr/440); tuneSum+=(midi-Math.round(midi))*mag[k]; tuneW+=mag[k];
+      }
     }
-    frames.push({time:start/sr,chroma,energy}); done++;
-    if(done%24===0){setStatus('Распознаю аккорды…',0.15+0.7*(done/totalFrames));await sleep(0);}
+    framePeaks.push(pks); done++;
+    if(done%24===0){setStatus('Анализирую частоты…',0.12+0.4*(done/totalFrames));await sleep(0);}
   }
-  const en=frames.map(f=>f.energy).sort((a,b)=>a-b);
-  const silence=(en[Math.floor(en.length/2)]||0)*0.25;
-  let labels=frames.map(f=>{
-    if(f.energy<silence) return 'N';
-    let norm=0; for(const c of f.chroma) norm+=c*c; norm=Math.sqrt(norm)||1;
-    let best='N',bs=-1;
-    for(const t of TEMPLATES){let d=0;for(let i=0;i<12;i++)d+=(f.chroma[i]/norm)*t.vec[i];if(d>bs){bs=d;best=t.label;}}
-    return best;
-  });
-  labels=modeFilter(labels,11);
+  const tuning=tuneW>0?tuneSum/tuneW:0;
+
+  // --- пасс 2: хрома по пикам + эмиссии для каждого аккорда ---
+  const frames=[], emis=[];
+  for(let fi=0; fi<framePeaks.length; fi++){
+    const pks=framePeaks[fi];
+    const chroma=new Float32Array(12), bass=new Float32Array(12); let energy=0;
+    for(const p of pks){
+      const midi=69+12*Math.log2(p.f/440)-tuning;
+      const pc=((Math.round(midi)%12)+12)%12; const w=Math.sqrt(p.m);
+      chroma[pc]+=w; energy+=w; if(p.f<250) bass[pc]+=w;
+    }
+    frames.push({time:fi*HOP/sr, chroma, energy});
+    // центрируем и нормируем хрому
+    const mean=chroma.reduce((a,b)=>a+b,0)/12;
+    let nn=0; const cn=new Float32Array(12);
+    for(let i=0;i<12;i++){cn[i]=chroma[i]-mean; nn+=cn[i]*cn[i];}
+    nn=Math.sqrt(nn)||1; for(let i=0;i<12;i++)cn[i]/=nn;
+    let bassPC=-1,bm=0; for(let i=0;i<12;i++)if(bass[i]>bm){bm=bass[i];bassPC=i;}
+    const row=new Float32Array(TEMPLATES.length);
+    for(let t=0;t<TEMPLATES.length;t++){
+      let d=0; const v=TEMPLATES[t].vec; for(let i=0;i<12;i++)d+=cn[i]*v[i];
+      if(TEMPLATES[t].root===bassPC) d+=0.15;   // бонус, если бас совпал с корнем
+      row[t]=d;
+    }
+    emis.push({row,energy});
+    if(fi%40===0){setStatus('Распознаю аккорды…',0.55+0.35*(fi/framePeaks.length));await sleep(0);}
+  }
+
+  // порог тишины
+  const en=frames.map(f=>f.energy).slice().sort((a,b)=>a-b);
+  const silence=(en[Math.floor(en.length/2)]||0)*0.12;
+
+  // --- сглаживание Витерби со штрафом за смену аккорда ---
+  const S=TEMPLATES.length, P=0.35, F=emis.length;
+  const path=viterbi(emis,S,P);
+  let labels=path.map((s,i)=> emis[i].energy<silence ? 'N' : TEMPLATES[s].label);
+
   let segs=[];
   for(let i=0;i<labels.length;i++){const t=frames[i].time;
     if(segs.length&&segs[segs.length-1].label===labels[i]) segs[segs.length-1].end=t;
     else segs.push({label:labels[i],start:t,end:t});}
   if(segs.length) segs[segs.length-1].end=DURATION;
   for(let i=0;i<segs.length-1;i++) segs[i].end=segs[i+1].start;
-  segs=segs.filter(s=>s.label!=='N'&&(s.end-s.start)>=1.2);
+  segs=segs.filter(s=>s.label!=='N'&&(s.end-s.start)>=0.6);
   segs=mergeAdjacent(segs);
 
   SEGS=segs; BPM=estimateTempo(mono,sr); KEYLABEL=estimateKey(frames); BEATDUR=BPM>0?60/BPM:1.5;
@@ -430,10 +468,26 @@ async function analyze(audioBuf){
   renderAll();
 }
 
-function modeFilter(arr,win){const half=win>>1,out=arr.slice();
-  for(let i=0;i<arr.length;i++){const cnt={};
-    for(let j=Math.max(0,i-half);j<=Math.min(arr.length-1,i+half);j++)cnt[arr[j]]=(cnt[arr[j]]||0)+1;
-    let best=arr[i],bc=-1;for(const k in cnt)if(cnt[k]>bc){bc=cnt[k];best=k;}out[i]=best;}return out;}
+// Витерби: emis[f].row[state] — оценка; P — штраф за смену состояния
+function viterbi(emis,S,P){
+  const F=emis.length; if(!F) return [];
+  let prev=Array.from(emis[0].row);
+  const back=[];
+  for(let f=1;f<F;f++){
+    let b1=-1e9,a1=0,b2=-1e9;
+    for(let s=0;s<S;s++){const v=prev[s]; if(v>b1){b2=b1;b1=v;a1=s;}else if(v>b2)b2=v;}
+    const cur=new Array(S),bk=new Array(S),row=emis[f].row;
+    for(let s=0;s<S;s++){
+      const stay=prev[s], other=(a1===s?b2:b1)-P;
+      if(stay>=other){cur[s]=row[s]+stay;bk[s]=s;} else {cur[s]=row[s]+other;bk[s]=a1;}
+    }
+    prev=cur; back.push(bk);
+  }
+  let last=0,bv=-1e9; for(let s=0;s<S;s++)if(prev[s]>bv){bv=prev[s];last=s;}
+  const path=new Array(F); path[F-1]=last;
+  for(let f=F-1;f>0;f--)path[f-1]=back[f-1][path[f]];
+  return path;
+}
 function mergeAdjacent(segs){const out=[];for(const s of segs){
   if(out.length&&out[out.length-1].label===s.label)out[out.length-1].end=s.end;else out.push({...s});}return out;}
 function estimateTempo(mono,sr){const hop=Math.round(sr*0.01),env=[];
