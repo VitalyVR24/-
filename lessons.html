@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Уроки игры на гитаре</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14161c; --panel:#1d2029; --panel-2:#242834; --line:#2f3441;
+    --ink:#e8e6e1; --muted:#8a8f9c;
+    --amber:#e8a33d; --teal:#5fb3b3;
+    /* цвета пальцев */
+    --f1:#e8a33d; --f2:#5fb3b3; --f3:#b57edc; --f4:#6cc98f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:"Space Grotesk",system-ui,sans-serif;
+    line-height:1.5;min-height:100vh;padding:clamp(20px,4vw,44px) 20px 80px}
+  .wrap{max-width:760px;margin:0 auto}
+  a{color:inherit}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;gap:12px;flex-wrap:wrap}
+  .brand{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--amber)}
+  .backlink{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);text-decoration:none;
+    border:1px solid var(--line);padding:8px 14px;border-radius:9px;transition:border-color .15s}
+  .backlink:hover{border-color:var(--amber);color:var(--ink)}
+
+  h1{font-size:clamp(28px,5vw,42px);font-weight:700;letter-spacing:-.02em;line-height:1.1}
+  h1 .accent{color:var(--teal)}
+  .lede{color:var(--muted);margin-top:12px;max-width:46ch}
+
+  /* легенда пальцев */
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .legend .chip{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);
+    border-radius:99px;padding:7px 14px 7px 8px;font-size:13px}
+  .legend .dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+    color:#14161c;font-weight:700;font-family:"IBM Plex Mono",monospace;font-size:12px}
+
+  /* путь уроков */
+  .path{margin-top:34px;position:relative;padding-left:8px}
+  .lesson{display:flex;gap:16px;align-items:flex-start;position:relative;padding-bottom:18px}
+  .lesson::before{content:'';position:absolute;left:23px;top:46px;bottom:-4px;width:2px;background:var(--line)}
+  .lesson:last-child::before{display:none}
+  .node{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+    font-weight:700;font-size:18px;border:2px solid var(--line);background:var(--panel);z-index:1}
+  .lesson.done .node{background:var(--teal);border-color:var(--teal);color:#14161c}
+  .lesson.current .node{border-color:var(--amber);color:var(--amber);box-shadow:0 0 0 4px rgba(232,163,61,.14)}
+  .lesson.locked .node{color:var(--muted);opacity:.6}
+  .card{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+    cursor:pointer;transition:border-color .15s,transform .1s}
+  .card:hover{border-color:var(--amber)}
+  .lesson.locked .card{cursor:not-allowed;opacity:.55}
+  .lesson.locked .card:hover{border-color:var(--line);transform:none}
+  .card .kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--muted)}
+  .card .ttl{font-size:18px;font-weight:600;margin-top:3px}
+  .card .meta{color:var(--muted);font-size:13px;margin-top:4px}
+
+  /* экран урока */
+  .screen{display:none}
+  .screen.on{display:block}
+  .lesson-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+  .lesson-head .back{background:none;border:1px solid var(--line);color:var(--ink);cursor:pointer;
+    font-family:"IBM Plex Mono",monospace;font-size:13px;padding:9px 16px;border-radius:9px}
+  .lesson-head .back:hover{border-color:var(--amber)}
+
+  .learn{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start}
+  .learn .dia{flex:none;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .learn .info{flex:1;min-width:240px}
+  .learn h2{font-size:26px;font-weight:700}
+  .learn h2 .lat{color:var(--muted);font-size:18px;font-weight:500;margin-left:8px}
+  .steps{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+  .step{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);
+    border-radius:11px;padding:11px 14px;font-size:14px}
+  .step .fdot{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+    color:#14161c;font-weight:700;font-family:"IBM Plex Mono",monospace;font-size:13px}
+  .step.open .fdot{background:none;border:2px solid var(--muted);color:var(--muted)}
+  .step.mute .fdot{background:none;border:2px solid #6b7280;color:#6b7280}
+  .tip{margin-top:16px;color:var(--muted);font-size:14px;line-height:1.6}
+
+  .cta{margin-top:24px;background:var(--amber);color:#14161c;border:none;font-family:inherit;font-weight:700;
+    font-size:16px;padding:15px 32px;border-radius:12px;cursor:pointer;transition:transform .1s,box-shadow .12s}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(232,163,61,.28)}
+
+  /* экран практики */
+  .prac{text-align:center;max-width:520px;margin:0 auto}
+  .prac .now-chord{font-size:clamp(44px,12vw,84px);font-weight:700;letter-spacing:-.02em;margin:6px 0}
+  .prac .now-chord.min{color:var(--teal)} .prac .now-chord.maj{color:var(--amber)}
+  .prac .dia-big{margin:8px auto 0;width:max-content}
+  .beats{display:flex;justify-content:center;gap:12px;margin:22px 0}
+  .beat{width:16px;height:16px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line)}
+  .beat.on{background:var(--amber);border-color:var(--amber);transform:scale(1.25)}
+  .coming{color:var(--muted);font-family:"IBM Plex Mono",monospace;font-size:14px;margin-top:6px;min-height:20px}
+  .tempo{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:22px}
+  .tempo button{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);
+    color:var(--ink);font-size:20px;cursor:pointer}
+  .tempo .bpm{font-family:"IBM Plex Mono",monospace;font-size:15px;min-width:88px}
+  .prac-controls{margin-top:26px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{font-family:inherit;font-weight:600;font-size:15px;padding:13px 26px;border-radius:12px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+  .btn.primary{background:var(--amber);border-color:var(--amber);color:#14161c}
+  .countdown{font-size:64px;font-weight:700;color:var(--amber);min-height:74px}
+
+  .done-banner{background:var(--teal);color:#14161c;border-radius:14px;padding:20px;margin-top:24px;
+    font-weight:600;text-align:center;display:none}
+  .done-banner.on{display:block}
+
+  footer{margin-top:48px;color:var(--muted);font-size:12px;font-family:"IBM Plex Mono",monospace;
+    border-top:1px solid var(--line);padding-top:16px;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">уроки · акустическая гитара</div>
+    <a class="backlink" href="index.html">← Определитель аккордов</a>
+  </div>
+
+  <!-- ЭКРАН: ПУТЬ УРОКОВ -->
+  <div class="screen on" id="screen-path">
+    <h1>Учись играть <span class="accent">по шагам</span></h1>
+    <p class="lede">Каждый палец — своим цветом. Проходи уроки по порядку: сначала аккорд,
+    потом короткая практика под метроном. Прогресс сохраняется на этом устройстве.</p>
+
+    <div class="legend">
+      <div class="chip"><span class="dot" style="background:var(--f1)">1</span>указательный</div>
+      <div class="chip"><span class="dot" style="background:var(--f2)">2</span>средний</div>
+      <div class="chip"><span class="dot" style="background:var(--f3)">3</span>безымянный</div>
+      <div class="chip"><span class="dot" style="background:var(--f4)">4</span>мизинец</div>
+    </div>
+
+    <div class="path" id="path"></div>
+  </div>
+
+  <!-- ЭКРАН: УРОК (аккорд) -->
+  <div class="screen" id="screen-lesson">
+    <div class="lesson-head">
+      <div class="brand" id="lesson-kicker">урок</div>
+      <button class="back" id="lesson-back">← К урокам</button>
+    </div>
+    <div class="learn">
+      <div class="dia" id="lesson-dia"></div>
+      <div class="info">
+        <h2 id="lesson-title"></h2>
+        <div class="steps" id="lesson-steps"></div>
+        <div class="tip" id="lesson-tip"></div>
+        <button class="cta" id="lesson-practice">Тренировать →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ЭКРАН: ПРАКТИКА -->
+  <div class="screen" id="screen-prac">
+    <div class="lesson-head">
+      <div class="brand" id="prac-kicker">практика</div>
+      <button class="back" id="prac-back">← Выйти</button>
+    </div>
+    <div class="prac">
+      <div class="coming" id="prac-hint">Нажми «Начать», играй аккорд на каждый щелчок метронома</div>
+      <div class="countdown" id="prac-count"></div>
+      <div class="now-chord" id="prac-chord">—</div>
+      <div class="dia-big" id="prac-dia"></div>
+      <div class="beats" id="prac-beats"></div>
+      <div class="coming" id="prac-next"></div>
+      <div class="tempo">
+        <button id="bpm-down">–</button>
+        <span class="bpm" id="bpm-val">60 BPM</span>
+        <button id="bpm-up">+</button>
+      </div>
+      <div class="prac-controls">
+        <button class="btn primary" id="prac-start">Начать</button>
+        <button class="btn" id="prac-stop" style="display:none">Стоп</button>
+      </div>
+      <div class="done-banner" id="prac-done">Урок пройден! 🎸 Возвращайся к списку — открылся следующий.</div>
+    </div>
+  </div>
+
+  <footer>Работает офлайн · прогресс хранится в этом браузере</footer>
+</div>
+
+<script>
+// ---------- Аккорды: формы (низкая E → высокая e), пальцы, тип ----------
+const CHORDS={
+  'Em':{frets:[0,2,2,0,0,0],fingers:[0,2,3,0,0,0]},
+  'Am':{frets:[-1,0,2,2,1,0],fingers:[0,0,2,3,1,0]},
+  'E' :{frets:[0,2,2,1,0,0],fingers:[0,2,3,1,0,0]},
+  'A' :{frets:[-1,0,2,2,2,0],fingers:[0,0,1,2,3,0]},
+  'Dm':{frets:[-1,-1,0,2,3,1],fingers:[0,0,0,2,3,1]},
+  'D' :{frets:[-1,-1,0,2,3,2],fingers:[0,0,0,1,3,2]},
+  'C' :{frets:[-1,3,2,0,1,0],fingers:[0,3,2,0,1,0]},
+  'G' :{frets:[3,2,0,0,0,3],fingers:[2,1,0,0,0,3]}
+};
+const FCOLOR={1:'var(--f1)',2:'var(--f2)',3:'var(--f3)',4:'var(--f4)'};
+const FCOLOR_HEX={1:'#e8a33d',2:'#5fb3b3',3:'#b57edc',4:'#6cc98f'};
+const FNAME={1:'Указательный',2:'Средний',3:'Безымянный',4:'Мизинец'};
+const STR_NOTES=['ми (толстая)','ля','ре','соль','си','ми (тонкая)']; // 6→1
+function isMin(c){return c.endsWith('m');}
+
+// ---------- Уроки ----------
+const LESSONS=[
+  {id:'em',type:'chord',chord:'Em',title:'Ми-минор',tip:'Самый лёгкий аккорд — всего два пальца рядом. С него начинают почти все.'},
+  {id:'am',type:'chord',chord:'Am',title:'Ля-минор',tip:'Три пальца. Следи, чтобы 1-я (тонкая) струна звучала открыто.'},
+  {id:'song-em-am',type:'song',title:'Практика: Em ↔ Am',chords:['Em','Am','Em','Am'],bpm:55,
+    tip:'Меняй два аккорда по кругу. Не гонись за скоростью — важна чистота.'},
+  {id:'e',type:'chord',chord:'E',title:'Ми-мажор',tip:'Как Em, но добавляется указательный на 1-й лад 3-й струны.'},
+  {id:'d',type:'chord',chord:'D',title:'Ре-мажор',tip:'Толстые струны (6 и 5) не играем. Пальцы образуют треугольник.'},
+  {id:'song-e-a-d',type:'song',title:'Практика: E → A → D',chords:['E','A','D','A'],bpm:60,
+    tip:'Классическая тройка мажорных аккордов. Слушай, чтобы все струны звенели.'},
+  {id:'c',type:'chord',chord:'C',title:'До-мажор',tip:'Растяжка чуть шире. 6-ю (толстую) струну не задевай.'},
+  {id:'g',type:'chord',chord:'G',title:'Соль-мажор',tip:'Пальцы разъезжаются широко — это нормально, привыкнешь.'},
+  {id:'song-c-g-am',type:'song',title:'Практика: C → G → Am',chords:['C','G','Am','G'],bpm:60,
+    tip:'Основа тысяч песен. Тренируй быстрый переход C→G.'},
+  {id:'song-final',type:'song',title:'Финал: C → G → Am → F… почти!',chords:['C','G','Am','C','G','Em'],bpm:65,
+    tip:'Собери всё вместе. Поздравляю — ты знаешь базовые аккорды!'}
+];
+
+// ---------- Отрисовка аккорда с цветными пальцами ----------
+function drawChord(chord,scale){
+  const d=CHORDS[chord]; if(!d) return '';
+  const s=scale||1;
+  const W=124*s,H=150*s,x0=22*s,x1=104*s,yTop=34*s,rows=4;
+  const sg=(x1-x0)/5, fh=(H-18*s-yTop)/rows;
+  const f=d.frets, fg=d.fingers;
+  const fretted=f.filter(v=>v>0);
+  let start=1; if(fretted.length&&Math.max(...fretted)>4)start=Math.min(...fretted);
+  const xs=i=>x0+i*sg, rowY=fr=>yTop+(fr-start+0.5)*fh;
+  let o=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">`;
+  for(let i=0;i<6;i++) o+=`<line x1="${xs(i)}" y1="${yTop}" x2="${xs(i)}" y2="${yTop+rows*fh}" stroke="#3a4050" stroke-width="${1.2*s}"/>`;
+  for(let r=0;r<=rows;r++){const y=yTop+r*fh;const sw=(r===0&&start===1)?4*s:1.2*s;
+    o+=`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="#3a4050" stroke-width="${sw}"/>`;}
+  if(start>1) o+=`<text x="${x0-8*s}" y="${yTop+fh*0.7}" fill="#8a8f9c" font-size="${11*s}" font-family="IBM Plex Mono,monospace" text-anchor="end">${start}</text>`;
+  for(let i=0;i<6;i++){
+    const x=xs(i);
+    if(f[i]===-1){o+=`<text x="${x}" y="${yTop-9*s}" fill="#6b7280" font-size="${12*s}" text-anchor="middle">×</text>`;}
+    else if(f[i]===0){o+=`<circle cx="${x}" cy="${yTop-11*s}" r="${4*s}" fill="none" stroke="#8a8f9c" stroke-width="${1.4*s}"/>`;}
+    else{
+      const cy=rowY(f[i]); const col=FCOLOR_HEX[fg[i]]||'#e8a33d';
+      o+=`<circle cx="${x}" cy="${cy}" r="${8*s}" fill="${col}"/>`;
+      if(fg[i]>0) o+=`<text x="${x}" y="${cy+3.5*s}" fill="#14161c" font-size="${9.5*s}" font-weight="700" font-family="IBM Plex Mono,monospace" text-anchor="middle">${fg[i]}</text>`;
+    }
+  }
+  return o+'</svg>';
+}
+
+// ---------- Прогресс ----------
+const KEY='guitarLessonsProgress';
+function getDone(){try{return JSON.parse(localStorage.getItem(KEY))||[];}catch(e){return [];}}
+function setDone(arr){try{localStorage.setItem(KEY,JSON.stringify(arr));}catch(e){}}
+function markDone(id){const d=getDone(); if(!d.includes(id)){d.push(id);setDone(d);}}
+function isUnlocked(idx){ if(idx===0) return true; const done=getDone(); return done.includes(LESSONS[idx-1].id); }
+
+// ---------- Экраны ----------
+const $=id=>document.getElementById(id);
+function show(screen){['screen-path','screen-lesson','screen-prac'].forEach(s=>$(s).classList.toggle('on',s===screen));window.scrollTo({top:0,behavior:'smooth'});}
+
+// ---------- Путь уроков ----------
+function renderPath(){
+  const done=getDone(); const path=$('path'); path.innerHTML='';
+  LESSONS.forEach((L,idx)=>{
+    const unlocked=isUnlocked(idx); const isDone=done.includes(L.id);
+    const cur=unlocked && !isDone;
+    const row=document.createElement('div');
+    row.className='lesson '+(isDone?'done':cur?'current':unlocked?'':'locked');
+    const nodeInner = isDone?'✓' : unlocked?(idx+1) : '🔒';
+    const kicker = L.type==='song' ? 'песня-практика' : 'аккорд';
+    const meta = L.type==='song' ? L.chords.join(' · ') : 'новый аккорд';
+    row.innerHTML=
+      `<div class="node">${nodeInner}</div>`+
+      `<div class="card"><div class="kicker">Урок ${idx+1} · ${kicker}</div>`+
+      `<div class="ttl">${L.title}</div><div class="meta">${meta}</div></div>`;
+    const card=row.querySelector('.card');
+    if(unlocked) card.addEventListener('click',()=>openLesson(idx));
+    path.appendChild(row);
+  });
+}
+
+// ---------- Открыть урок ----------
+let curIdx=0;
+function openLesson(idx){
+  curIdx=idx; const L=LESSONS[idx];
+  if(L.type==='chord') openChordLesson(L,idx);
+  else openPractice(L,idx); // песни сразу ведут в практику
+}
+function openChordLesson(L,idx){
+  $('lesson-kicker').textContent=`Урок ${idx+1} · аккорд`;
+  $('lesson-dia').innerHTML=drawChord(L.chord,1.15);
+  $('lesson-title').innerHTML=`${L.title} <span class="lat">${L.chord}</span>`;
+  // шаги: какие пальцы куда
+  const d=CHORDS[L.chord]; const steps=$('lesson-steps'); steps.innerHTML='';
+  for(let i=0;i<6;i++){
+    const strNo=6-i;
+    if(d.frets[i]>0){
+      const fg=d.fingers[i];
+      const el=document.createElement('div'); el.className='step';
+      el.innerHTML=`<span class="fdot" style="background:${FCOLOR_HEX[fg]}">${fg}</span>`+
+        `${FNAME[fg]} — ${d.frets[i]}-й лад, ${strNo}-я струна (${STR_NOTES[i]})`;
+      steps.appendChild(el);
+    }
+  }
+  // открытые и заглушенные
+  const openStr=[],muteStr=[];
+  for(let i=0;i<6;i++){ if(d.frets[i]===0)openStr.push(6-i); if(d.frets[i]===-1)muteStr.push(6-i); }
+  if(openStr.length){const el=document.createElement('div');el.className='step open';
+    el.innerHTML=`<span class="fdot">○</span>Открытые струны (играем, но пальцы не ставим): ${openStr.join(', ')}`;steps.appendChild(el);}
+  if(muteStr.length){const el=document.createElement('div');el.className='step mute';
+    el.innerHTML=`<span class="fdot">×</span>Не играем струны: ${muteStr.join(', ')}`;steps.appendChild(el);}
+  $('lesson-tip').textContent=L.tip||'';
+  show('screen-lesson');
+}
+$('lesson-back').addEventListener('click',()=>{renderPath();show('screen-path');});
+$('lesson-practice').addEventListener('click',()=>openPractice(LESSONS[curIdx],curIdx));
+
+// ---------- Практика (метроном) ----------
+let bpm=60, seq=[], beatsPerBar=4, loops=1, practicing=false, timer=null, actx=null;
+function openPractice(L,idx){
+  curIdx=idx;
+  $('prac-kicker').textContent=`Урок ${idx+1} · практика`;
+  if(L.type==='chord'){ seq=[L.chord,L.chord,L.chord,L.chord]; loops=1; bpm=60;
+    $('prac-hint').textContent='Держи аккорд и играй его на каждый щелчок. 4 такта.'; }
+  else { seq=L.chords.slice(); loops=2; bpm=L.bpm||60;
+    $('prac-hint').textContent='Меняй аккорд каждый такт вслед за подсказкой. Два круга.'; }
+  $('bpm-val').textContent=bpm+' BPM';
+  $('prac-done').classList.remove('on');
+  $('prac-count').textContent='';
+  setPracChord(seq[0]); $('prac-next').textContent='';
+  buildBeats();
+  $('prac-start').style.display=''; $('prac-stop').style.display='none';
+  show('screen-prac');
+}
+function setPracChord(c){
+  const el=$('prac-chord'); el.textContent=c; el.className='now-chord '+(isMin(c)?'min':'maj');
+  $('prac-dia').innerHTML=drawChord(c,1);
+}
+function buildBeats(){const b=$('prac-beats');b.innerHTML='';for(let i=0;i<beatsPerBar;i++){const d=document.createElement('div');d.className='beat';b.appendChild(d);}}
+function litBeat(n){document.querySelectorAll('#prac-beats .beat').forEach((d,i)=>d.classList.toggle('on',i===n));}
+
+function click(accent){
+  try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();
+    o.frequency.value=accent?1300:820; o.connect(g); g.connect(actx.destination);
+    g.gain.setValueAtTime(0.0001,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.35,actx.currentTime+0.001);
+    g.gain.exponentialRampToValueAtTime(0.0001,actx.currentTime+0.08);
+    o.start(); o.stop(actx.currentTime+0.09);
+  }catch(e){}
+}
+
+function startPractice(){
+  if(practicing) return; practicing=true;
+  $('prac-start').style.display='none'; $('prac-stop').style.display='';
+  $('prac-done').classList.remove('on');
+  const total=seq.length*loops;
+  let beat=-4; // отсчёт 4 удара
+  const interval=60000/bpm;
+  const tick=()=>{
+    if(beat<0){
+      $('prac-count').textContent=String(4+beat+1); // 1,2,3,4
+      click(true);
+      beat++; return;
+    }
+    $('prac-count').textContent='';
+    const chordIdx=Math.floor(beat/beatsPerBar);
+    if(chordIdx>=total){ finishPractice(); return; }
+    const beatInBar=beat%beatsPerBar;
+    litBeat(beatInBar);
+    click(beatInBar===0);
+    if(beatInBar===0){
+      const c=seq[chordIdx%seq.length]; setPracChord(c);
+      const nextC=seq[(chordIdx+1)%seq.length];
+      $('prac-next').textContent = (chordIdx+1<total) ? ('дальше: '+nextC) : 'последний!';
+    }
+    beat++;
+  };
+  tick();
+  timer=setInterval(tick,interval);
+}
+function stopPractice(){
+  practicing=false; if(timer){clearInterval(timer);timer=null;}
+  litBeat(-1); $('prac-count').textContent='';
+  $('prac-start').style.display=''; $('prac-stop').style.display='none';
+}
+function finishPractice(){
+  stopPractice();
+  markDone(LESSONS[curIdx].id);
+  $('prac-next').textContent='';
+  $('prac-done').classList.add('on');
+}
+$('prac-start').addEventListener('click',startPractice);
+$('prac-stop').addEventListener('click',stopPractice);
+$('prac-back').addEventListener('click',()=>{stopPractice();renderPath();show('screen-path');});
+$('bpm-up').addEventListener('click',()=>{if(!practicing){bpm=Math.min(140,bpm+5);$('bpm-val').textContent=bpm+' BPM';}});
+$('bpm-down').addEventListener('click',()=>{if(!practicing){bpm=Math.max(40,bpm-5);$('bpm-val').textContent=bpm+' BPM';}});
+
+// старт
+renderPath();
+</script>
+</body>
+</html>
