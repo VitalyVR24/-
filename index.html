@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -442,6 +441,9 @@ function renderAll(){
   $('dur').innerHTML=Math.round(DURATION)+'<small>сек</small>';
   $('total').textContent=fmt(DURATION);
 
+  // первый аккорд тянем к началу, последний — до конца (чтобы не было пустот)
+  if(SEGS.length){SEGS[0].start=0;SEGS[SEGS.length-1].end=DURATION;}
+
   // лента
   ribbon.innerHTML=''; RBLOCKS=[]; activeBlock=-1;
   ribbon.style.width=(DURATION*PXPS)+'px';
@@ -474,8 +476,10 @@ function renderAll(){
   else if(BPM<120){sp.textContent='↓  ↓  ↑  ↑↓↑';sn.textContent='Средний темп — универсальная «четвёрка».';}
   else{sp.textContent='↓↑ ↓↑ ↓↑ ↓↑';sn.textContent='Быстрый темп — ровная «восьмёрка».';}
 
-  lastIdx=-1; frameUpdate(0);
   statusEl.classList.remove('on'); resultsEl.classList.add('on');
+  lastIdx=-1; activeBlock=-1;
+  // ждём, пока браузер посчитает ширину видимого блока, и только потом ставим ленту
+  requestAnimationFrame(()=>requestAnimationFrame(()=>frameUpdate(0)));
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
