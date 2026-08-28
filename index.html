@@ -307,10 +307,19 @@ function fft(re,im){
         re[i+k]=ur+vr;im[i+k]=ui+vi;re[i+k+len/2]=ur-vr;im[i+k+len/2]=ui-vi;
         const n2=cwr*wr-cwi*wi;cwi=cwr*wi+cwi*wr;cwr=n2;}}}
 }
+// Гармонические шаблоны: каждая нота аккорда добавляет энергию не только себе,
+// но и своим обертонам (октава, квинта, терция) — так шаблон совпадает с реальным
+// спектром, где обертоны «подмешиваются». Это уменьшает путаницу мажор/минор.
+const HARM=[1,0.5,0.33,0.25,0.16,0.11]; // веса обертонов 1..6
 const TEMPLATES=[];
 for(let r=0;r<12;r++)for(const q of ['maj','min']){
   const v=new Array(12).fill(0); const iv=q==='maj'?[0,4,7]:[0,3,7];
-  iv.forEach(x=>v[(r+x)%12]=1);
+  for(const note of iv){
+    for(let h=1;h<=6;h++){
+      const pc=(((r+note+Math.round(12*Math.log2(h)))%12)+12)%12;
+      v[pc]+=HARM[h-1];
+    }
+  }
   const mean=v.reduce((a,b)=>a+b,0)/12; const c=v.map(x=>x-mean);
   const nrm=Math.sqrt(c.reduce((a,b)=>a+b*b,0))||1;
   TEMPLATES.push({label:NAMES[r]+(q==='maj'?'':'m'),root:r,vec:c.map(x=>x/nrm)});
@@ -418,8 +427,8 @@ async function analyze(audioBuf){
   }
   const tuning=tuneW>0?tuneSum/tuneW:0;
 
-  // --- пасс 2: хрома по пикам + эмиссии для каждого аккорда ---
-  const frames=[], emis=[];
+  // --- пасс 2: хрома по пикам (сырая), плюс бас для каждого кадра ---
+  const frames=[], rawChroma=[], bassPCs=[];
   for(let fi=0; fi<framePeaks.length; fi++){
     const pks=framePeaks[fi];
     const chroma=new Float32Array(12), bass=new Float32Array(12); let energy=0;
@@ -429,20 +438,49 @@ async function analyze(audioBuf){
       chroma[pc]+=w; energy+=w; if(p.f<250) bass[pc]+=w;
     }
     frames.push({time:fi*HOP/sr, chroma, energy});
-    // центрируем и нормируем хрому
-    const mean=chroma.reduce((a,b)=>a+b,0)/12;
-    let nn=0; const cn=new Float32Array(12);
-    for(let i=0;i<12;i++){cn[i]=chroma[i]-mean; nn+=cn[i]*cn[i];}
-    nn=Math.sqrt(nn)||1; for(let i=0;i<12;i++)cn[i]/=nn;
+    rawChroma.push(chroma);
     let bassPC=-1,bm=0; for(let i=0;i<12;i++)if(bass[i]>bm){bm=bass[i];bassPC=i;}
+    bassPCs.push(bassPC);
+    if(fi%60===0){setStatus('Считаю ноты…',0.55+0.15*(fi/framePeaks.length));await sleep(0);}
+  }
+
+  // временное сглаживание хромы (медиана окном 5 кадров) — убирает случайные всплески
+  const F=rawChroma.length;
+  const smChroma=[];
+  for(let i=0;i<F;i++){
+    const out=new Float32Array(12);
+    for(let pc=0;pc<12;pc++){
+      const buf=[];
+      for(let j=Math.max(0,i-2);j<=Math.min(F-1,i+2);j++) buf.push(rawChroma[j][pc]);
+      buf.sort((a,b)=>a-b); out[pc]=buf[buf.length>>1];
+    }
+    smChroma.push(out);
+  }
+
+  // тональность песни (по суммарной сглаженной хроме) → приоритет диатоническим аккордам
+  const tot=new Float32Array(12);
+  for(const c of smChroma) for(let i=0;i<12;i++) tot[i]+=c[i];
+  KEYLABEL=keyFromChroma(tot);
+  const scale=scaleSet(KEYLABEL);
+
+  // --- эмиссии для каждого аккорда ---
+  const emis=[];
+  for(let i=0;i<F;i++){
+    const c=smChroma[i];
+    const mean=c.reduce((a,b)=>a+b,0)/12;
+    let nn=0; const cn=new Float32Array(12);
+    for(let j=0;j<12;j++){cn[j]=c[j]-mean; nn+=cn[j]*cn[j];}
+    nn=Math.sqrt(nn)||1; for(let j=0;j<12;j++)cn[j]/=nn;
+    const bassPC=bassPCs[i];
     const row=new Float32Array(TEMPLATES.length);
     for(let t=0;t<TEMPLATES.length;t++){
-      let d=0; const v=TEMPLATES[t].vec; for(let i=0;i<12;i++)d+=cn[i]*v[i];
-      if(TEMPLATES[t].root===bassPC) d+=0.15;   // бонус, если бас совпал с корнем
+      let d=0; const v=TEMPLATES[t].vec; for(let j=0;j<12;j++)d+=cn[j]*v[j];
+      if(TEMPLATES[t].root===bassPC) d+=0.15;      // бас совпал с корнем
+      if(scale && scale.has(TEMPLATES[t].root)) d+=0.06; // аккорд в тональности
       row[t]=d;
     }
-    emis.push({row,energy});
-    if(fi%40===0){setStatus('Распознаю аккорды…',0.55+0.35*(fi/framePeaks.length));await sleep(0);}
+    emis.push({row,energy:frames[i].energy});
+    if(i%80===0){setStatus('Распознаю аккорды…',0.72+0.2*(i/F));await sleep(0);}
   }
 
   // порог тишины
@@ -450,7 +488,7 @@ async function analyze(audioBuf){
   const silence=(en[Math.floor(en.length/2)]||0)*0.12;
 
   // --- сглаживание Витерби со штрафом за смену аккорда ---
-  const S=TEMPLATES.length, P=0.35, F=emis.length;
+  const S=TEMPLATES.length, P=0.35;
   const path=viterbi(emis,S,P);
   let labels=path.map((s,i)=> emis[i].energy<silence ? 'N' : TEMPLATES[s].label);
 
@@ -463,9 +501,28 @@ async function analyze(audioBuf){
   segs=segs.filter(s=>s.label!=='N'&&(s.end-s.start)>=0.6);
   segs=mergeAdjacent(segs);
 
-  SEGS=segs; BPM=estimateTempo(mono,sr); KEYLABEL=estimateKey(frames); BEATDUR=BPM>0?60/BPM:1.5;
+  SEGS=segs; BPM=estimateTempo(mono,sr); BEATDUR=BPM>0?60/BPM:1.5;
   setStatus('Готово',1); await sleep(120);
   renderAll();
+}
+
+// тональность из суммарной хромы (профили Краумхансла)
+function keyFromChroma(tot){
+  const maj=[6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,2.88];
+  const min=[6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17];
+  let best='—',bs=-1;
+  for(let r=0;r<12;r++)for(const[p,suf]of[[maj,''],[min,'m']]){
+    let d=0;for(let i=0;i<12;i++)d+=tot[(i+r)%12]*p[i];if(d>bs){bs=d;best=NAMES[r]+suf;}}
+  return best;
+}
+// множество ступеней (pitch classes) тональности
+function scaleSet(key){
+  if(!key||key==='—') return null;
+  const minor=key.endsWith('m');
+  const root=NAMES.indexOf(minor?key.slice(0,-1):key);
+  if(root<0) return null;
+  const steps=minor?[0,2,3,5,7,8,10]:[0,2,4,5,7,9,11];
+  return new Set(steps.map(s=>(root+s)%12));
 }
 
 // Витерби: emis[f].row[state] — оценка; P — штраф за смену состояния
@@ -512,8 +569,8 @@ function renderAll(){
   $('dur').innerHTML=Math.round(DURATION)+'<small>сек</small>';
   $('total').textContent=fmt(DURATION);
 
-  // первый аккорд тянем к началу, последний — до конца (чтобы не было пустот)
-  if(SEGS.length){SEGS[0].start=0;SEGS[SEGS.length-1].end=DURATION;}
+  // первый аккорд тянем к началу только если он начинается близко к нулю (не растягиваем на весь интро)
+  if(SEGS.length){ if(SEGS[0].start<1.5) SEGS[0].start=0; SEGS[SEGS.length-1].end=DURATION; }
 
   // лента
   ribbon.innerHTML=''; RBLOCKS=[]; activeBlock=-1;
