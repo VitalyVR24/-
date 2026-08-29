@@ -51,6 +51,8 @@
   .card .kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
   .card .ttl{font-size:18px;font-weight:600;margin-top:3px}
   .card .meta{color:var(--muted);font-size:13px;margin-top:4px}
+  .card.goal{border-color:rgba(232,163,61,.5);background:linear-gradient(180deg,rgba(232,163,61,.10),var(--panel))}
+  .card.goal .ttl{color:var(--amber)}
 
   .screen{display:none}
   .screen.on{display:block}
@@ -208,22 +210,24 @@ const LESSONS=[
   {id:'r-downs',type:'song',title:'Бой: четвертями вниз',chords:['Em','Am','Em','Am'],bpm:55,pattern:'downs',tip:'Самый простой ритм — удар вниз на каждый счёт.'},
   {id:'e',type:'chord',chord:'E',title:'Ми-мажор',tip:'Как Em плюс указательный на 1-й лад 3-й струны.'},
   {id:'a',type:'chord',chord:'A',title:'Ля-мажор',tip:'Три пальца в ряд на 2-м ладу. 6-ю струну не играем.'},
+  {id:'goal-1',type:'song',goal:true,title:'🏆 Цель 1: минорный мотив',chords:['Am','E','Am','E','Am','A','E','Am'],bpm:60,pattern:'eighths',tip:'Первая цель! Играй только выученными аккордами: Am, E, A. Пройди её целиком.'},
   {id:'d',type:'chord',chord:'D',title:'Ре-мажор',tip:'Толстые струны 6 и 5 не играем, пальцы — треугольником.'},
   {id:'s-ead',type:'song',title:'Песня: E → A → D',chords:['E','A','D','A'],bpm:60,pattern:'eighths',tip:'Три главных мажорных аккорда, ритм восьмыми ↓↑.'},
   {id:'c',type:'chord',chord:'C',title:'До-мажор',tip:'Растяжка шире. 6-ю (толстую) струну не задевай.'},
   {id:'g',type:'chord',chord:'G',title:'Соль-мажор',tip:'Пальцы разъезжаются широко — это нормально.'},
+  {id:'goal-2',type:'song',goal:true,title:'🏆 Цель 2: G → D → Em → C',chords:['G','D','Em','C','G','D','Em','C'],bpm:64,pattern:'six',tip:'Легендарная последовательность — на ней построены сотни хитов. Все аккорды уже выучены!'},
   {id:'r-six',type:'song',title:'Бой: «шестёрка»',chords:['Em','Em','Am','Am'],bpm:60,pattern:'six',tip:'Классический бой: вниз, вниз-вверх, вверх-вниз-вверх. Смотри на стрелки.'},
   {id:'s-cgam',type:'song',title:'Песня: C → G → Am',chords:['C','G','Am','G'],bpm:62,pattern:'six',tip:'Основа тысяч песен. Тренируй переход C→G.'},
   {id:'a7',type:'chord',chord:'A7',title:'Ля-мажор 7 (A7)',tip:'Как A, но проще — два пальца. Звучит «блюзово».'},
   {id:'e7',type:'chord',chord:'E7',title:'Ми-мажор 7 (E7)',tip:'Как E без безымянного — легче и с характером.'},
   {id:'d7',type:'chord',chord:'D7',title:'Ре-мажор 7 (D7)',tip:'Септаккорд ре. Часто ведёт к соль-мажору.'},
-  {id:'s-blues',type:'song',title:'Блюз: E7 → A7',chords:['E7','A7','E7','A7'],bpm:70,pattern:'six',tip:'Простейший блюзовый квадрат на септаккордах.'},
+  {id:'goal-3',type:'song',goal:true,title:'🏆 Цель 3: блюзовый квадрат',chords:['E7','A7','E7','E7','A7','A7','E7','D7'],bpm:70,pattern:'six',tip:'Настоящий блюз на септаккордах E7, A7, D7. Держи ритм «шестёркой».'},
   {id:'cadd9',type:'chord',chord:'Cadd9',title:'До с девятой (Cadd9)',tip:'Красивый «поп-аккорд». Легко чередуется с G.'},
   {id:'fmaj7',type:'chord',chord:'Fmaj7',title:'Фа-мажор 7 (Fmaj7)',tip:'Лёгкая замена сложному F — без баррэ, три пальца.'},
   {id:'s-final1',type:'song',title:'Песня: C → G → Am → Fmaj7',chords:['C','G','Am','Fmaj7'],bpm:66,pattern:'six',tip:'Собери всё вместе — это уже настоящая песня!'},
   {id:'f',type:'chord',chord:'F',title:'Фа-мажор (F, баррэ)',tip:'Указательный прижимает все струны на 1-м ладу. Не сразу — это нормально.'},
   {id:'bm',type:'chord',chord:'Bm',title:'Си-минор (Bm, баррэ)',tip:'Второй баррэ: указательный на 2-м ладу через все струны.'},
-  {id:'s-final2',type:'song',title:'Финал: Am → F → C → G',chords:['Am','F','C','G'],bpm:70,pattern:'six',tip:'Мощная последовательность с баррэ. Пройдёшь — ты гитарист!'}
+  {id:'goal-4',type:'song',goal:true,title:'🏆 Финальная цель: собери всё',chords:['Am','F','C','G','C','G','Am','Fmaj7','F','C','G','Am'],bpm:72,pattern:'six',tip:'Финал! Открытые аккорды и баррэ вместе — это уже полноценная песня. Пройдёшь — ты гитарист!'}
 ];
 
 // ---------- Схема аккорда ----------
@@ -293,10 +297,10 @@ function renderPath(){
     const unlocked=isUnlocked(idx),isDone=done.includes(L.id),cur=unlocked&&!isDone;
     const row=document.createElement('div');
     row.className='lesson '+(isDone?'done':cur?'current':unlocked?'':'locked');
-    const node=isDone?'✓':unlocked?(idx+1):'🔒';
-    const kicker=L.type==='song'?(L.id.startsWith('r-')?'бой':'песня'):'аккорд';
+    const node=isDone?'✓':unlocked?(L.goal?'🏆':(idx+1)):'🔒';
+    const kicker=L.goal?'цель':(L.type==='song'?(L.id.startsWith('r-')?'бой':'песня'):'аккорд');
     const meta=L.type==='song'?(PATTERNS[L.pattern].name+' · '+L.chords.join(' ')):'новый аккорд';
-    row.innerHTML=`<div class="node">${node}</div><div class="card"><div class="kicker">Урок ${idx+1} · ${kicker}</div><div class="ttl">${L.title}</div><div class="meta">${meta}</div></div>`;
+    row.innerHTML=`<div class="node">${node}</div><div class="card${L.goal?' goal':''}"><div class="kicker">Урок ${idx+1} · ${kicker}</div><div class="ttl">${L.title}</div><div class="meta">${meta}</div></div>`;
     if(unlocked) row.querySelector('.card').addEventListener('click',()=>openLesson(idx));
     path.appendChild(row);
   });
