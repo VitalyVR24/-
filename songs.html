@@ -51,6 +51,14 @@
   .secbtn .schords{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted)}
   .secbtn .chk{color:var(--teal);font-size:16px}
   .song-controls{display:flex;align-items:center;gap:16px;margin:18px 0 0;flex-wrap:wrap}
+  .patsel{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+  .patbtn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:9px 14px;cursor:pointer;font-family:inherit;font-size:13px;text-align:left;line-height:1.2}
+  .patbtn .n{font-weight:600}
+  .patbtn .d{display:block;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+  .patbtn.sel{border-color:var(--amber);background:linear-gradient(180deg,rgba(232,163,61,.14),var(--panel))}
+  .patbtn.sel .n{color:var(--amber)}
+  .cur-row{margin-top:16px}
+  #prac-dia svg{width:118px;height:auto}
   .tempo{display:flex;align-items:center;gap:12px}
   .tempo button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:19px;cursor:pointer}
   .tempo .bpm{font-family:"IBM Plex Mono",monospace;font-size:14px;min-width:80px;text-align:center}
@@ -115,6 +123,8 @@
     <div class="structure" id="song-structure"></div>
     <div class="sec-label">Отрабатывай по частям, потом целиком</div>
     <div class="seclist" id="song-sections"></div>
+    <div class="sec-label">Бой и сложность</div>
+    <div class="patsel" id="patsel"></div>
     <div class="song-controls">
       <div class="tempo"><button id="s-bpm-down">–</button><span class="bpm" id="s-bpm-val">80 BPM</span><button id="s-bpm-up">+</button></div>
       <label class="toggle"><input type="checkbox" id="s-sound" checked>звук гитары</label>
@@ -156,9 +166,11 @@ const OPEN_MIDI=[40,45,50,55,59,64];
 const PALETTE=['#6cc98f','#5fb3b3','#e8a33d','#b57edc','#e8687a','#7aa2f7'];
 function isMin(c){return /m$/.test(c)&&!/maj/i.test(c);}
 const PATTERNS={
-  'downs':{name:'Четвертями вниз',steps:['D','','D','','D','','D','']},
-  'eighths':{name:'Восьмыми ↓↑',steps:['D','U','D','U','D','U','D','U']},
-  'six':{name:'«Шестёрка»',steps:['D','','D','U','','U','D','U']}
+  'downs':{name:'Вниз',diff:'Легко',steps:['D','','D','','D','','D','']},
+  'eighths':{name:'Восьмёрка ↓↑',diff:'Средне',steps:['D','U','D','U','D','U','D','U']},
+  'country':{name:'Кантри',diff:'Средне',steps:['D','','D','U','D','','D','U']},
+  'six':{name:'«Шестёрка»',diff:'Сложно',steps:['D','','D','U','','U','D','U']},
+  'ballad':{name:'Баллада',diff:'Сложно',steps:['D','','','U','','U','D','']}
 };
 
 // ---------- Песни (только аккорды и структура) ----------
@@ -259,6 +271,7 @@ function openSong(i){
   $('song-chips').innerHTML=chords.map(c=>`<div class="chipdia">${drawChord(c,0.72)}<div class="nm">${c}</div></div>`).join('');
   // структура
   $('song-structure').textContent=s.order.map(k=>s.sections[k].name).join('  →  ');
+  renderPatterns();
   // секции
   const list=$('song-sections'); list.innerHTML='';
   Object.entries(s.sections).forEach(([key,sec])=>{
@@ -275,6 +288,16 @@ function openSong(i){
   show('screen-song');
 }
 $('song-back').addEventListener('click',()=>{renderList();show('screen-list');});
+function renderPatterns(){
+  const box=$('patsel'); box.innerHTML='';
+  Object.entries(PATTERNS).forEach(([key,p])=>{
+    const b=document.createElement('button');
+    b.className='patbtn'+(key===sPattern?' sel':'');
+    b.innerHTML=`<span class="n">${p.name}</span><span class="d">${p.diff}</span>`;
+    b.addEventListener('click',()=>{sPattern=key;renderPatterns();});
+    box.appendChild(b);
+  });
+}
 $('s-bpm-up').addEventListener('click',()=>{sBpm=Math.min(160,sBpm+4);$('s-bpm-val').textContent=sBpm+' BPM';});
 $('s-bpm-down').addEventListener('click',()=>{sBpm=Math.max(40,sBpm-4);$('s-bpm-val').textContent=sBpm+' BPM';});
 $('s-sound').addEventListener('change',e=>{sSound=e.target.checked;});
@@ -313,7 +336,7 @@ function startWholePractice(song){ const full=song.order.flatMap(k=>song.section
 function openPractice(title,sequence,tempo,patKey,lp,songId,secKey,layout){
   seq=sequence; loops=lp; bpm=tempo; pattern=PATTERNS[patKey].steps; soundOn=sSound; doneTag={songId,secKey};
   $('prac-kicker').textContent=title;
-  $('prac-pattern').textContent='Бой: '+PATTERNS[patKey].name;
+  $('prac-pattern').textContent='Бой: '+PATTERNS[patKey].name+' · '+PATTERNS[patKey].diff;
   seqColors={};[...new Set(seq)].forEach((c,i)=>seqColors[c]=PALETTE[i%PALETTE.length]);
   buildChart(layout||[{name:'Партия',chords:seq}]);
   $('prac-done').classList.remove('on');$('prac-count').textContent='';$('prac-next').textContent='';
