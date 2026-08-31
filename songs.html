@@ -166,28 +166,29 @@ const OPEN_MIDI=[40,45,50,55,59,64];
 const PALETTE=['#6cc98f','#5fb3b3','#e8a33d','#b57edc','#e8687a','#7aa2f7'];
 function isMin(c){return /m$/.test(c)&&!/maj/i.test(c);}
 const PATTERNS={
-  'downs':{name:'Вниз',diff:'Легко',steps:['D','','D','','D','','D','']},
-  'eighths':{name:'Восьмёрка ↓↑',diff:'Средне',steps:['D','U','D','U','D','U','D','U']},
-  'country':{name:'Кантри',diff:'Средне',steps:['D','','D','U','D','','D','U']},
-  'six':{name:'«Шестёрка»',diff:'Сложно',steps:['D','','D','U','','U','D','U']},
-  'ballad':{name:'Баллада',diff:'Сложно',steps:['D','','','U','','U','D','']}
+  'downs':{name:'Вниз',diff:'Легко',type:'strum',steps:['D','','D','','D','','D','']},
+  'eighths':{name:'Восьмёрка ↓↑',diff:'Средне',type:'strum',steps:['D','U','D','U','D','U','D','U']},
+  'country':{name:'Кантри',diff:'Средне',type:'strum',steps:['D','','D','U','D','','D','U']},
+  'six':{name:'«Шестёрка»',diff:'Сложно',type:'strum',steps:['D','','D','U','','U','D','U']},
+  'ballad':{name:'Баллада',diff:'Сложно',type:'strum',steps:['D','','','U','','U','D','']},
+  'hurtpick':{name:'Перебор',diff:'Как в оригинале',type:'pick',steps:[[1],[2],[3,4,5],[],[1],[2],[3,4,5],[]]}
 };
 
 // ---------- Песни (только аккорды и структура) ----------
 const SONGS=[
   {id:'hurt',title:'Hurt',artist:'Johnny Cash / Nine Inch Nails',bpm:80,pattern:'downs',
-   sections:{intro:{name:'Вступление',chords:['Am','C','D','Am']},
-     verse:{name:'Куплет',chords:['Am','C','D','Am','C','D']},
-     chorus:{name:'Припев',chords:['Am','F','C','G','Am','F','C','G']}},
+   sections:{intro:{name:'Вступление',pattern:'hurtpick',chords:['Am','C','D','Am']},
+     verse:{name:'Куплет (перебор)',pattern:'hurtpick',chords:['Am','C','D','Am','C','D']},
+     chorus:{name:'Припев (бой вниз)',pattern:'downs',chords:['Am','F','C','G','Am','F','C','G']}},
    order:['intro','verse','chorus','verse','chorus']},
-  {id:'knockin',title:"Knockin' on Heaven's Door",artist:'Bob Dylan',bpm:70,pattern:'downs',
+  {id:'knockin',title:"Knockin' on Heaven's Door",artist:'Bob Dylan',bpm:70,pattern:'six',
    sections:{verse:{name:'Куплет',chords:['G','D','Am','G','D','C']},
      chorus:{name:'Припев',chords:['G','D','Am','G','D','C']}},
    order:['verse','chorus','verse','chorus']},
   {id:'zombie',title:'Zombie',artist:'The Cranberries',bpm:84,pattern:'six',
    sections:{main:{name:'Основная часть',chords:['Em','C','G','D']}},
    order:['main','main','main','main']},
-  {id:'letitbe',title:'Let It Be',artist:'The Beatles',bpm:72,pattern:'downs',
+  {id:'letitbe',title:'Let It Be',artist:'The Beatles',bpm:72,pattern:'six',
    sections:{verse:{name:'Куплет',chords:['C','G','Am','F','C','G','F','C']},
      chorus:{name:'Припев',chords:['Am','G','F','C','C','G','F','C']}},
    order:['verse','chorus','verse','chorus']}
@@ -235,6 +236,8 @@ function playNote(midi,when,gain){const ctx=ensureCtx();const src=ctx.createBuff
 function playChord(chord,dir){const ctx=ensureCtx(),d=CHORDS[chord];if(!d)return;const notes=[];
   for(let i=0;i<6;i++){if(d.frets[i]>=0)notes.push(OPEN_MIDI[i]+d.frets[i]);}
   if(dir==='U')notes.reverse();const t0=ctx.currentTime+0.02,gap=0.016;notes.forEach((m,k)=>playNote(m,t0+k*gap,0.26));}
+function playPick(chord,strings){const ctx=ensureCtx(),d=CHORDS[chord];if(!d)return;const t0=ctx.currentTime+0.01;let k=0;
+  strings.forEach(si=>{if(d.frets[si]>=0){playNote(OPEN_MIDI[si]+d.frets[si],t0+k*0.012,si<3?0.30:0.22);k++;}});}
 function precache(chords){chords.forEach(c=>{const d=CHORDS[c];if(d)for(let i=0;i<6;i++)if(d.frets[i]>=0)ksBuffer(OPEN_MIDI[i]+d.frets[i]);});}
 function click(a){try{const ctx=ensureCtx();const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=a?1300:820;o.connect(g);g.connect(ctx.destination);
   g.gain.setValueAtTime(0.0001,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.3,ctx.currentTime+0.001);g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.07);o.start();o.stop(ctx.currentTime+0.08);}catch(e){}}
@@ -263,7 +266,7 @@ function renderList(){
 // ---------- Экран песни ----------
 let curSong=null, sBpm=80, sPattern='downs', sSound=true;
 function openSong(i){
-  const s=SONGS[i]; curSong=s; sBpm=s.bpm; sPattern=s.pattern;
+  const s=SONGS[i]; curSong=s; sBpm=s.bpm; sPattern='auto';
   $('song-title').textContent=s.title; $('song-artist').textContent=s.artist;
   $('s-bpm-val').textContent=sBpm+' BPM';
   // аккорды
@@ -290,7 +293,13 @@ function openSong(i){
 $('song-back').addEventListener('click',()=>{renderList();show('screen-list');});
 function renderPatterns(){
   const box=$('patsel'); box.innerHTML='';
+  const auto=document.createElement('button');
+  auto.className='patbtn'+(sPattern==='auto'?' sel':'');
+  auto.innerHTML='<span class="n">Авто</span><span class="d">как в оригинале</span>';
+  auto.addEventListener('click',()=>{sPattern='auto';renderPatterns();});
+  box.appendChild(auto);
   Object.entries(PATTERNS).forEach(([key,p])=>{
+    if(key==='hurtpick')return; // перебор доступен только в Авто
     const b=document.createElement('button');
     b.className='patbtn'+(key===sPattern?' sel':'');
     b.innerHTML=`<span class="n">${p.name}</span><span class="d">${p.diff}</span>`;
@@ -304,7 +313,8 @@ $('s-sound').addEventListener('change',e=>{sSound=e.target.checked;});
 
 // ---------- Игра ----------
 let bpm=80,seq=[],loops=1,pattern=PATTERNS.downs.steps,practicing=false,rafId=null,soundOn=true;
-let seqColors={},curDrawChord=null,CW=0,CH=0,doneTag=null,lastBar=-1;
+let seqColors={},curDrawChord=null,CW=0,CH=0,doneTag=null,lastBar=-1,BARPATS=['downs'],lastPatKey=null;
+function patAt(bar){return PATTERNS[BARPATS[bar%BARPATS.length]]||PATTERNS.downs;}
 const cv=$('game'),ctx2=cv.getContext('2d');
 function colorFor(c){return seqColors[c]||'#e8a33d';}
 function resizeCanvas(){const rect=cv.getBoundingClientRect();const dpr=window.devicePixelRatio||1;cv.width=Math.max(1,rect.width*dpr);cv.height=Math.max(1,rect.height*dpr);ctx2.setTransform(dpr,0,0,dpr,0,0);CW=rect.width;CH=rect.height;}
@@ -327,20 +337,24 @@ function drawGame(bp,total){
   const prog=Math.max(0,Math.min(1,bp/(total*4)));ctx2.fillStyle='#2a2f3a';ctx2.fillRect(0,CH-5,CW,5);ctx2.fillStyle='#e8a33d';ctx2.fillRect(0,CH-5,CW*prog,5);
 }
 
+function patFor(song,secKey){ return (sPattern!=='auto') ? sPattern : (song.sections[secKey].pattern || song.pattern); }
 function startSectionPractice(song,key){ const sec=song.sections[key];
-  openPractice(song.title+' · '+sec.name, sec.chords.slice(), sBpm, sPattern, (sec.chords.length<=4?2:1), song.id, key, [{name:sec.name,chords:sec.chords}]); }
+  const barPats=sec.chords.map(()=>patFor(song,key));
+  openPractice(song.title+' · '+sec.name, sec.chords.slice(), sBpm, barPats, (sec.chords.length<=4?2:1), song.id, key, [{name:sec.name,chords:sec.chords}]); }
 function startWholePractice(song){ const full=song.order.flatMap(k=>song.sections[k].chords);
+  const barPats=[]; song.order.forEach(k=>{const p=patFor(song,k);song.sections[k].chords.forEach(()=>barPats.push(p));});
   const layout=song.order.map(k=>({name:song.sections[k].name,chords:song.sections[k].chords}));
-  openPractice(song.title+' · вся песня', full, sBpm, sPattern, 1, song.id, '__whole__', layout); }
+  openPractice(song.title+' · вся песня', full, sBpm, barPats, 1, song.id, '__whole__', layout); }
 
-function openPractice(title,sequence,tempo,patKey,lp,songId,secKey,layout){
-  seq=sequence; loops=lp; bpm=tempo; pattern=PATTERNS[patKey].steps; soundOn=sSound; doneTag={songId,secKey};
+function openPractice(title,sequence,tempo,barPats,lp,songId,secKey,layout){
+  seq=sequence; loops=lp; bpm=tempo; BARPATS=barPats; soundOn=sSound; doneTag={songId,secKey};
   $('prac-kicker').textContent=title;
-  $('prac-pattern').textContent='Бой: '+PATTERNS[patKey].name+' · '+PATTERNS[patKey].diff;
+  const uniq=[...new Set(barPats)];
+  $('prac-pattern').textContent = uniq.length>1 ? 'Как в оригинале — по секциям (перебор/бой)' : ('Бой: '+PATTERNS[uniq[0]].name+' · '+PATTERNS[uniq[0]].diff);
   seqColors={};[...new Set(seq)].forEach((c,i)=>seqColors[c]=PALETTE[i%PALETTE.length]);
   buildChart(layout||[{name:'Партия',chords:seq}]);
   $('prac-done').classList.remove('on');$('prac-count').textContent='';$('prac-next').textContent='';
-  curDrawChord=null; lastBar=-1; setChord(seq[0]); buildArrows();
+  curDrawChord=null; lastBar=-1; lastPatKey=null; setChord(seq[0]); buildArrows(PATTERNS[barPats[0]]);
   $('prac-start').style.display='';$('prac-stop').style.display='none';
   show('screen-prac');
   requestAnimationFrame(()=>{resizeCanvas();drawGame(-4,seq.length*loops);});
@@ -363,7 +377,11 @@ function litChart(bar){ document.querySelectorAll('#prac-chart .ccell').forEach(
   const on=(+c.dataset.bar===bar); c.classList.toggle('active',on);
   c.style.background=on?c.dataset.color:'transparent'; c.style.color=on?'#14161c':'var(--ink)'; }); }
 function setChord(c){const el=$('prac-chord');el.textContent=c;el.className='now-chord '+(isMin(c)?'min':'maj');$('prac-dia').innerHTML=drawChord(c,0.95);}
-function buildArrows(){const a=$('prac-arrows');a.innerHTML='';pattern.forEach(st=>{const d=document.createElement('div');d.className='arrow '+(st==='D'?'d':st==='U'?'u':'rest');d.textContent=st==='D'?'↓':st==='U'?'↑':'·';a.appendChild(d);});}
+function buildArrows(pat){const a=$('prac-arrows');a.innerHTML='';
+  pat.steps.forEach(st=>{const d=document.createElement('div');let cls='rest',txt='·';
+    if(pat.type==='pick'){ if(Array.isArray(st)&&st.length){cls='d';txt=st.length>1?'↓':'•';} }
+    else { if(st==='D'){cls='d';txt='↓';} else if(st==='U'){cls='u';txt='↑';} }
+    d.className='arrow '+cls;d.textContent=txt;a.appendChild(d);});}
 function litArrow(n){document.querySelectorAll('#prac-arrows .arrow').forEach((d,i)=>d.classList.toggle('on',i===n));}
 
 let startTime=0,lastSub=-1,lastCb=-99;
@@ -377,9 +395,12 @@ function startPractice(){
     if(bp<0){$('prac-count').textContent=String(Math.max(1,Math.ceil(-bp)));const cb=Math.floor(bp);if(cb!==lastCb){lastCb=cb;click(true);}}
     else{$('prac-count').textContent='';
       const sub=Math.floor(bp*2);
-      if(sub>lastSub){for(let s=lastSub+1;s<=sub;s++){const bar=Math.floor(s/8);if(bar<total){const sib=s%8,st=pattern[sib];if(st==='D'||st==='U'){soundOn?playChord(seq[bar%seq.length],st):click(sib===0);}}}lastSub=sub;}
+      if(sub>lastSub){for(let s=lastSub+1;s<=sub;s++){const bar=Math.floor(s/8);if(bar<total){const sib=s%8;const pat=patAt(bar);const st=pat.steps[sib];
+        if(pat.type==='pick'){ if(Array.isArray(st)&&st.length){soundOn?playPick(seq[bar%seq.length],st):click(sib===0);} }
+        else { if(st==='D'||st==='U'){soundOn?playChord(seq[bar%seq.length],st):click(sib===0);} } }}lastSub=sub;}
       const bar=Math.floor(bp/4);
-      if(bar<total){const c=seq[bar%seq.length];if(c!==curDrawChord){curDrawChord=c;setChord(c);$('prac-next').textContent=(bar+1<total)?('дальше: '+seq[(bar+1)%seq.length]):'последний такт!';}
+      if(bar<total){const pk=BARPATS[bar%BARPATS.length]; if(pk!==lastPatKey){lastPatKey=pk;buildArrows(PATTERNS[pk]);}
+        const c=seq[bar%seq.length];if(c!==curDrawChord){curDrawChord=c;setChord(c);$('prac-next').textContent=(bar+1<total)?('дальше: '+seq[(bar+1)%seq.length]):'последний такт!';}
         const db=bar%seq.length; if(db!==lastBar){lastBar=db;litChart(db);}}
       litArrow(((Math.floor(bp*2))%8+8)%8);}
     drawGame(bp,total);
