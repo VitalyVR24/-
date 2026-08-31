@@ -72,6 +72,12 @@
   .arrow{width:34px;height:42px;border-radius:9px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;font-size:19px;color:var(--muted)}
   .arrow.d{color:var(--amber)} .arrow.u{color:var(--teal)} .arrow.rest{color:#3a4050}
   .arrow.on{transform:translateY(-4px);box-shadow:0 6px 16px rgba(0,0,0,.4);border-color:currentColor}
+  .chart-title{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:24px 0 10px}
+  .chart{display:flex;flex-direction:column;gap:14px}
+  .chart-sec .lbl{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+  .chart-sec .cells{display:flex;flex-wrap:wrap;gap:6px}
+  .ccell{min-width:46px;padding:8px 6px;border:1.5px solid #3a4050;border-radius:8px;text-align:center;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:14px;transition:transform .1s,background .1s}
+  .ccell.active{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.4)}
   .controls-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px;flex-wrap:wrap}
   .prac-controls{margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
   .btn{font-family:inherit;font-weight:600;font-size:15px;padding:13px 26px;border-radius:12px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
@@ -122,6 +128,8 @@
       <div class="game-wrap"><canvas id="game"></canvas><div class="count-overlay" id="prac-count"></div></div>
       <div class="cur-row"><div id="prac-dia"></div><div><div class="now-chord" id="prac-chord">—</div><div class="coming" id="prac-next"></div></div></div>
       <div class="arrows" id="prac-arrows"></div>
+      <div class="chart-title">Партитура — вся партия целиком</div>
+      <div class="chart" id="prac-chart"></div>
       <div class="prac-controls">
         <button class="btn primary" id="prac-start">▶ Начать</button>
         <button class="btn" id="prac-stop" style="display:none">■ Стоп</button>
@@ -273,7 +281,7 @@ $('s-sound').addEventListener('change',e=>{sSound=e.target.checked;});
 
 // ---------- Игра ----------
 let bpm=80,seq=[],loops=1,pattern=PATTERNS.downs.steps,practicing=false,rafId=null,soundOn=true;
-let seqColors={},curDrawChord=null,CW=0,CH=0,doneTag=null;
+let seqColors={},curDrawChord=null,CW=0,CH=0,doneTag=null,lastBar=-1;
 const cv=$('game'),ctx2=cv.getContext('2d');
 function colorFor(c){return seqColors[c]||'#e8a33d';}
 function resizeCanvas(){const rect=cv.getBoundingClientRect();const dpr=window.devicePixelRatio||1;cv.width=Math.max(1,rect.width*dpr);cv.height=Math.max(1,rect.height*dpr);ctx2.setTransform(dpr,0,0,dpr,0,0);CW=rect.width;CH=rect.height;}
@@ -297,21 +305,40 @@ function drawGame(bp,total){
 }
 
 function startSectionPractice(song,key){ const sec=song.sections[key];
-  openPractice(song.title+' · '+sec.name, sec.chords.slice(), sBpm, sPattern, (sec.chords.length<=4?2:1), song.id, key); }
+  openPractice(song.title+' · '+sec.name, sec.chords.slice(), sBpm, sPattern, (sec.chords.length<=4?2:1), song.id, key, [{name:sec.name,chords:sec.chords}]); }
 function startWholePractice(song){ const full=song.order.flatMap(k=>song.sections[k].chords);
-  openPractice(song.title+' · вся песня', full, sBpm, sPattern, 1, song.id, '__whole__'); }
+  const layout=song.order.map(k=>({name:song.sections[k].name,chords:song.sections[k].chords}));
+  openPractice(song.title+' · вся песня', full, sBpm, sPattern, 1, song.id, '__whole__', layout); }
 
-function openPractice(title,sequence,tempo,patKey,lp,songId,secKey){
+function openPractice(title,sequence,tempo,patKey,lp,songId,secKey,layout){
   seq=sequence; loops=lp; bpm=tempo; pattern=PATTERNS[patKey].steps; soundOn=sSound; doneTag={songId,secKey};
   $('prac-kicker').textContent=title;
   $('prac-pattern').textContent='Бой: '+PATTERNS[patKey].name;
   seqColors={};[...new Set(seq)].forEach((c,i)=>seqColors[c]=PALETTE[i%PALETTE.length]);
+  buildChart(layout||[{name:'Партия',chords:seq}]);
   $('prac-done').classList.remove('on');$('prac-count').textContent='';$('prac-next').textContent='';
-  curDrawChord=null; setChord(seq[0]); buildArrows();
+  curDrawChord=null; lastBar=-1; setChord(seq[0]); buildArrows();
   $('prac-start').style.display='';$('prac-stop').style.display='none';
   show('screen-prac');
   requestAnimationFrame(()=>{resizeCanvas();drawGame(-4,seq.length*loops);});
 }
+function buildChart(layout){
+  const box=$('prac-chart'); box.innerHTML=''; let gbar=0;
+  layout.forEach(sec=>{
+    const grp=document.createElement('div'); grp.className='chart-sec';
+    const lbl=document.createElement('div'); lbl.className='lbl'; lbl.textContent=sec.name; grp.appendChild(lbl);
+    const cells=document.createElement('div'); cells.className='cells';
+    sec.chords.forEach(ch=>{
+      const c=document.createElement('div'); c.className='ccell'; c.dataset.bar=gbar;
+      c.dataset.color=seqColors[ch]||'#3a4050'; c.style.borderColor=c.dataset.color; c.textContent=ch;
+      cells.appendChild(c); gbar++;
+    });
+    grp.appendChild(cells); box.appendChild(grp);
+  });
+}
+function litChart(bar){ document.querySelectorAll('#prac-chart .ccell').forEach(c=>{
+  const on=(+c.dataset.bar===bar); c.classList.toggle('active',on);
+  c.style.background=on?c.dataset.color:'transparent'; c.style.color=on?'#14161c':'var(--ink)'; }); }
 function setChord(c){const el=$('prac-chord');el.textContent=c;el.className='now-chord '+(isMin(c)?'min':'maj');$('prac-dia').innerHTML=drawChord(c,0.95);}
 function buildArrows(){const a=$('prac-arrows');a.innerHTML='';pattern.forEach(st=>{const d=document.createElement('div');d.className='arrow '+(st==='D'?'d':st==='U'?'u':'rest');d.textContent=st==='D'?'↓':st==='U'?'↑':'·';a.appendChild(d);});}
 function litArrow(n){document.querySelectorAll('#prac-arrows .arrow').forEach((d,i)=>d.classList.toggle('on',i===n));}
@@ -329,7 +356,8 @@ function startPractice(){
       const sub=Math.floor(bp*2);
       if(sub>lastSub){for(let s=lastSub+1;s<=sub;s++){const bar=Math.floor(s/8);if(bar<total){const sib=s%8,st=pattern[sib];if(st==='D'||st==='U'){soundOn?playChord(seq[bar%seq.length],st):click(sib===0);}}}lastSub=sub;}
       const bar=Math.floor(bp/4);
-      if(bar<total){const c=seq[bar%seq.length];if(c!==curDrawChord){curDrawChord=c;setChord(c);$('prac-next').textContent=(bar+1<total)?('дальше: '+seq[(bar+1)%seq.length]):'последний такт!';}}
+      if(bar<total){const c=seq[bar%seq.length];if(c!==curDrawChord){curDrawChord=c;setChord(c);$('prac-next').textContent=(bar+1<total)?('дальше: '+seq[(bar+1)%seq.length]):'последний такт!';}
+        const db=bar%seq.length; if(db!==lastBar){lastBar=db;litChart(db);}}
       litArrow(((Math.floor(bp*2))%8+8)%8);}
     drawGame(bp,total);
     if(bp>=total*4){finishPractice();return;}
